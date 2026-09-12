@@ -1,0 +1,513 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crossing Guard — design preview</title>
+<style>
+  
+  :root{
+    --paper:#FFFFFF; --sky:#EAF4FB; --sky-head:#D9EBF7; --line:#C9CDD1; --line-soft:#E3E6E9;
+    --ink:#1F2124; --ink-2:#4F5459; --ink-3:#7F858B;
+    --fyg:#DDF03A; --fyg-ink:#141604;
+    --grass:#3F8F3A; --grass-light:#EAF5E4;
+    --stop:#B01F24; --go:#3F8F3A; --ask:#C07A17;
+    --pavement:#9BA0A6;
+    --link:#0B5FA5; --visited:#6A4B9C;
+    
+    --term-bg:#22242A; --term-2:#2C2F36; --term-line:#3A3D45; --term-ink:#E6E7E4;
+    --term-dim:#9BA0A8; --term-grn:#8FD46A; --term-red:#F0785E; --term-yel:#E6D24A; --term-cy:#6FC6D6;
+    --serif:Georgia,'Times New Roman',serif;
+    --ui:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --mono:Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 var(--ui)}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+  a{color:var(--link)} a:visited{color:var(--visited)}
+  .band{border-bottom:1px solid var(--line)}
+  .band.alt{background:var(--sky)}
+  .band.grassband{background:var(--grass-light);border-top:1px solid var(--line)}
+
+  
+  .util{background:var(--sky);border-bottom:1px solid var(--line)}
+  .util .wrap{display:flex;justify-content:space-between;gap:12px;padding:5px 20px;font-size:11.5px;color:var(--ink-2);flex-wrap:wrap}
+  .util b{color:var(--stop)}
+  .mainnav{border-bottom:3px solid var(--ink)}
+  .mainnav .wrap{display:flex;align-items:stretch}
+  .logo{display:flex;align-items:center;gap:10px;padding:11px 18px 11px 0;color:var(--ink);cursor:pointer}
+  .logo b{font:bold 17px/1.1 var(--ui)} .logo small{display:block;font:11px/1.3 var(--ui);color:var(--ink-3)}
+  .tabs{display:flex;margin-left:auto}
+  .tabs button{display:flex;align-items:center;padding:0 17px;font:bold 12px var(--ui);letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-2);background:none;border:none;border-left:1px solid var(--line-soft);cursor:pointer}
+  .tabs button[aria-selected="true"]{background:var(--fyg);color:var(--fyg-ink);box-shadow:inset 0 0 0 2px var(--ink)}
+  .tabs button:hover{background:var(--sky)}
+  .tabs button:focus-visible{outline:3px solid var(--link);outline-offset:-3px}
+  .tabs .cta{background:var(--ink);color:#fff}
+  .tabs .cta[aria-selected="true"]{background:var(--fyg);color:var(--fyg-ink)}
+  .crumb{font-size:12px;color:var(--ink-3);padding:12px 0 0}
+  .page{display:none} .page.on{display:block}
+
+  h1{font:bold 34px/1.1 var(--ui);letter-spacing:-.015em;margin:0 0 12px}
+  h2{font:bold 22px/1.2 var(--ui);margin:0 0 6px}
+  h3{font:bold 15px var(--ui);margin:0 0 4px}
+  .eyebrow{font:bold 12px var(--ui);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+  p{margin:8px 0;max-width:66ch}
+  .prose{font:16px/1.7 var(--serif)}
+  .sub{font:17px/1.5 var(--ui);color:var(--ink-2);max-width:52ch}
+
+  
+  .hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;padding:52px 20px 46px}
+  @media(max-width:800px){.hero .wrap{grid-template-columns:1fr;gap:24px;padding:34px 20px}}
+  .hero .paddle{margin-bottom:14px}
+  .heroctas{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+
+  
+  .term{background:var(--term-bg);border:1px solid var(--term-line);border-radius:7px;overflow:hidden;
+    box-shadow:0 1px 0 rgba(0,0,0,.04);font:12.5px/1.65 var(--mono);color:var(--term-ink)}
+  .term .bar{background:var(--term-2);border-bottom:1px solid var(--term-line);padding:8px 12px;display:flex;align-items:center;gap:7px}
+  .term .dot{width:11px;height:11px;border-radius:50%;background:#4A4D55}
+  .term .ttl{margin-left:8px;font:11px var(--mono);color:var(--term-dim)}
+  .term .body{padding:14px 15px;white-space:pre-wrap;overflow-x:auto}
+  .term .body .l{display:block}
+  .c-dim{color:var(--term-dim)} .c-grn{color:var(--term-grn)} .c-red{color:var(--term-red)}
+  .c-yel{color:var(--term-yel)} .c-cy{color:var(--term-cy)} .c-w{color:#fff}
+  .prompt::before{content:"$ ";color:var(--term-grn)}
+
+  
+  .btn{display:inline-block;font:bold 13px var(--ui);text-transform:uppercase;letter-spacing:.05em;
+    padding:11px 20px;border:2px solid var(--ink);border-bottom-width:4px;background:var(--fyg);
+    color:var(--fyg-ink);cursor:pointer;border-radius:2px;text-decoration:none}
+  .btn:active{border-bottom-width:2px;margin-top:2px}
+  .btn-ghost{background:#fff;border:2px solid var(--ink);color:var(--ink);font:bold 13px var(--ui);
+    text-transform:uppercase;letter-spacing:.05em;padding:10px 18px;cursor:pointer;border-radius:2px;text-decoration:none;display:inline-block}
+  .btn-ghost:hover{background:var(--ink);color:#fff}
+  .btn:focus-visible,.btn-ghost:focus-visible{outline:3px solid var(--link);outline-offset:2px}
+
+  
+  .installrow{display:flex;gap:12px;flex-wrap:wrap;padding:20px 0}
+  .inst{flex:1;min-width:200px;background:var(--term-bg);border:1px solid var(--term-line);border-radius:6px;
+    padding:12px 14px;font:13px var(--mono);color:var(--term-ink);display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .inst .tag{color:var(--term-dim);font-size:11px}
+  .inst .cp{color:var(--term-cy);font-size:11px;cursor:pointer}
+
+  
+  .agents{display:flex;gap:10px;flex-wrap:wrap;padding:6px 0 4px}
+  .agent{border:1px solid var(--line);background:#fff;border-radius:4px;padding:9px 13px;display:flex;align-items:center;gap:9px;font:bold 13px var(--ui)}
+  .agent .mk{width:22px;height:22px;border-radius:3px;display:grid;place-items:center;font:bold 10px var(--mono);color:#fff}
+  .v{display:inline-block;font:bold 10px var(--ui);letter-spacing:.06em;padding:2px 7px;border-radius:2px;text-transform:uppercase}
+  .v-enf{background:var(--go);color:#fff}.v-best{background:var(--ask);color:#fff}
+  .v-adv{background:#fff;color:var(--ink-2);border:1px solid var(--ink-3)}.v-stop{background:var(--stop);color:#fff}
+
+  
+  .pillar{display:grid;grid-template-columns:1fr 1.1fr;gap:30px;align-items:center;padding:30px 0;border-top:1px solid var(--line-soft)}
+  .pillar:first-of-type{border-top:none}
+  .pillar.flip{grid-template-columns:1.1fr 1fr}
+  .pillar.flip .txt{order:2}
+  @media(max-width:800px){.pillar,.pillar.flip{grid-template-columns:1fr;gap:16px}.pillar.flip .txt{order:0}}
+  .num{font:bold 13px var(--mono);color:var(--ink-3)}
+
+  
+  .steps{display:flex;gap:16px;flex-wrap:wrap;padding:10px 0}
+  .step{flex:1;min-width:210px;border:1px solid var(--line);background:#fff;padding:16px}
+  .step .n{width:26px;height:26px;background:var(--fyg);border:2px solid var(--ink);border-radius:50%;
+    display:grid;place-items:center;font:bold 13px var(--ui);margin-bottom:8px}
+
+  
+  table{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);background:#fff}
+  caption{text-align:left;font:bold 12px var(--ui);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);padding:0 0 8px}
+  th{background:var(--sky-head);font:bold 11.5px var(--ui);letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-2);text-align:left;padding:7px 10px;border:1px solid var(--line)}
+  td{padding:7px 10px;border:1px solid var(--line-soft);vertical-align:top}
+  tbody tr:nth-child(odd){background:#FAFBF6}
+  td.num2{font:12.5px var(--mono);text-align:right;white-space:nowrap}
+  td a{font-weight:bold;text-decoration:none;border-bottom:2px solid var(--fyg);color:var(--ink)}
+  .tablewrap{overflow-x:auto;margin:12px 0}
+
+  
+  .proof{display:flex;gap:26px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:26px 0}
+  .proofstat{font:bold 15px var(--ui)}
+  .proofstat b{display:block;font:bold 30px/1 var(--ui);color:var(--ink)}
+
+  .panel{border:1px solid var(--line);background:#fff;margin:14px 0}
+  .panel .ph{background:var(--sky-head);border-bottom:1px solid var(--line);padding:7px 12px;
+    font:bold 12px var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+  .panel .pb{padding:12px 14px}
+  .panel .pb p{font-size:14px;margin:5px 0}
+
+  .spec-toggle{font:bold 11.5px var(--ui);letter-spacing:.05em;text-transform:uppercase;background:#fff;
+    border:1px dashed var(--ink-3);color:var(--ink-2);padding:6px 12px;cursor:pointer;margin:10px 0 0;border-radius:2px}
+  .spec{display:none;margin:10px 0 0;border:1px dashed var(--ink-3);background:#FCFCF7;padding:14px 16px;font:12.5px var(--mono)}
+  .spec.on{display:block}
+  .spec dl{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;margin:0}
+  .spec dt{color:var(--ink-3)} .spec dd{margin:0;overflow-wrap:anywhere}
+  @media(max-width:640px){.spec dl{grid-template-columns:1fr}.hero h1{font-size:28px}}
+
+  .meter{height:10px;background:var(--line-soft);border:1px solid var(--line);margin:8px 0 4px}
+  .meter i{display:block;height:100%;background:var(--grass)}
+  .walled .meter i{background:var(--stop)}
+  .fine{font:12px var(--mono);color:var(--ink-3)}
+  details{border:1px solid var(--line);margin-bottom:8px;background:#fff}
+  summary{cursor:pointer;padding:10px 14px;font-weight:bold;font-size:14px;background:var(--sky-head)}
+  details p{padding:4px 14px 12px;margin:0;font-size:14px;max-width:72ch}
+
+  .crosswalk{height:16px;background:var(--pavement);background-image:repeating-linear-gradient(90deg,#FFFFFF 0 34px,transparent 34px 50px)}
+
+  .finalcta{text-align:center;padding:46px 20px}
+  .finalcta h2{font-size:26px}
+  .finalcta .heroctas{justify-content:center}
+
+  footer{background:var(--ink);color:#C7C8CC;font-size:13px}
+  footer .cols2{display:flex;gap:30px;flex-wrap:wrap;padding:30px 20px 14px;max-width:980px;margin:0 auto}
+  footer .fc{flex:1;min-width:150px}
+  footer h4{font:bold 11px var(--ui);letter-spacing:.09em;text-transform:uppercase;color:#8A8C92;margin:0 0 8px}
+  footer ul{list-style:none;margin:0;padding:0;line-height:2}
+  footer a{color:#E4E5E8}
+  footer .legal{border-top:1px solid #34363D;padding:12px 20px 26px;color:#8A8C92;font-size:12px;max-width:980px;margin:0 auto}
+  footer .legal b{color:var(--fyg)}
+  .sec{padding:36px 0}
+  .mainnav .wrap,.tabs{flex-wrap:wrap}
+  .tabs button{min-height:48px}
+  #p-agents .agent-note{font:14px/1.6 var(--ui);color:var(--ink-2)}
+  #p-agents .wrap.sec{padding:36px 20px}
+  #p-agents .agent-lead{font:18px/1.6 var(--serif)}
+  #p-agents .agent-example{margin:16px 0;padding:18px;border-left:5px solid var(--fyg);background:var(--sky);font:18px/1.6 var(--serif)}
+  #p-agents h3{font-size:18px}
+  #p-agents .steps p,#p-agents .panel p{font-size:16px}
+  #p-agents .memory-band{background:var(--grass-light);border-top:1px solid var(--line)}
+  #p-agents summary:focus-visible{outline:3px solid var(--link);outline-offset:2px}
+  @media(max-width:640px){.tabs{margin-left:0;width:100%}.tabs button{padding:0 12px}#p-agents .steps{display:block}#p-agents .step{margin-bottom:12px}}
+</style>
+
+<div class="mainnav"><div class="wrap">
+  <span class="logo" onclick="go('home')">
+    <svg width="28" height="32" viewBox="0 0 30 34" aria-hidden="true">
+      <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+      <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+      <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </span>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-home" aria-selected="true" onclick="go('home')">Home</button>
+    <button role="tab" id="t-agents" aria-controls="p-agents" aria-selected="false" onclick="go('agents')">Agents</button>
+    <button role="tab" id="t-compare" aria-selected="false" onclick="go('compare')">Compare</button>
+    <button role="tab" id="t-reference" aria-selected="false" onclick="go('reference')">Reference</button>
+    <button role="tab" id="t-limits" aria-selected="false" onclick="go('limits')">Limits</button>
+    <button role="tab" id="t-docs" class="cta" aria-selected="false" onclick="go('home')">Docs ↗</button>
+  </div>
+</div></div>
+
+
+<div class="page on" id="p-home" role="tabpanel">
+
+  
+  <div class="band hero">
+    <div class="wrap">
+      <div>
+        <svg class="paddle" width="40" height="46" viewBox="0 0 30 34" aria-hidden="true">
+          <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+          <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+          <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+        </svg>
+        <h1>Your LLMs need a<br>crossing guard.</h1>
+        <p class="sub">One memory, one rulebook, one honest boundary — across every coding agent
+          you use. Local-first, being prepared for open-source release. Hook overhead depends on your configuration.</p>
+        <div class="heroctas">
+          <a class="btn" href="#release-status" onclick="go('home')">Release status</a>
+          <a class="btn-ghost" href="#" onclick="go('compare');return false">See the evidence →</a>
+        </div>
+      </div>
+      <div class="term" role="img" aria-label="Terminal: a rule blocks a push to main across agents">
+        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">claude code — protect-shared-branch</span></div>
+        <div class="body"><span class="l c-dim">› agent wants to run:</span><span class="l"><span class="c-w">git push origin main --force</span></span><span class="l">&nbsp;</span><span class="l c-red">✋ BLOCKED — crossing rule: protect-shared-branch</span><span class="l c-dim">   reason: never force-push a shared branch</span><span class="l c-dim">   coverage: <span class="c-grn">enforced (fail-closed)</span> · claude-code</span><span class="l">&nbsp;</span><span class="l c-dim">› agent:</span><span class="l">"Understood — I'll open a PR instead."</span></div>
+      </div>
+    </div>
+  </div>
+
+<div class="band alt"><div class="wrap sec" style="padding:22px 20px" id="release-status"><h2>Public release in preparation.</h2><p>No public install or download is available from this page. This is a website design preview, not a product release. Examples, support labels and metrics illustrate the intended design.</p></div></div>  
+  <div class="band"><div class="wrap sec">
+    <p class="eyebrow">Works with the agents you already use — and says exactly how well</p>
+    <div class="agents">
+      <div class="agent"><span class="mk" style="background:#C6603E">CC</span> Claude Code <span class="v v-enf">Proven</span></div>
+      <div class="agent"><span class="mk" style="background:#1F2124">CX</span> Codex <span class="v v-enf">Proven</span></div>
+      <div class="agent"><span class="mk" style="background:#3F8F3A">OC</span> OpenCode <span class="v v-enf">Proven</span></div>
+      <div class="agent"><span class="mk" style="background:#5A6570">CP</span> Copilot CLI <span class="v v-adv">Registered</span></div>
+      <div class="agent"><span class="mk" style="background:#2E6BB0">GM</span> Gemini CLI <span class="v v-adv">Registered</span></div>
+    </div>
+    <p class="prose" style="font-size:14.5px">Same binary, same rule file, demonstrated live on three agents across three model
+      families. The two "registered" agents have their hook seams mapped; coverage is probed before we ever
+      call it proven. <b>We never claim a wall we didn't build</b> — that honesty is the product.</p>
+  </div></div>
+
+  
+  <div class="band alt"><div class="wrap sec">
+    <p class="eyebrow">What it does</p>
+
+    <div class="pillar">
+      <div class="txt"><p class="num">01</p><h2>One memory</h2>
+        <p class="prose">Your project knowledge follows you between agents — files-first, no vendor store.
+          Hit a limit on one, pick up on another with the context intact.</p></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing memory — carry</span></div>
+        <div class="body"><span class="l prompt c-w">crossing carry --from claude --to codex</span><span class="l c-dim">  reading 3 dossiers, 1 open session…</span><span class="l c-grn">  ✓ memory injected into codex session</span><span class="l c-grn">  ✓ 41 min of context preserved</span><span class="l c-dim">  nothing left the machine.</span></div>
+      </div>
+    </div>
+
+    <div class="pillar flip">
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing coverage — the honest report</span></div>
+        <div class="body"><span class="l prompt c-w">crossing coverage protect-shared-branch</span><span class="l c-dim">  rule → per-agent enforcement:</span><span class="l">  claude-code   <span class="c-grn">enforced (fail-closed)</span></span><span class="l">  codex         <span class="c-grn">enforced (fail-closed)</span></span><span class="l">  opencode      <span class="c-yel">best-effort (fails open on timeout)</span></span><span class="l">  copilot-cli   <span class="c-dim">unsupported — seam not yet probed</span></span></div>
+      </div>
+      <div class="txt"><p class="num">02</p><h2>One rulebook</h2>
+        <p class="prose">Write "never push to main" once. It compiles to each agent's own hook seam —
+          and the coverage report tells you, per rule, per agent, what's truly enforced versus best-effort.
+          Nobody else labels the seams honestly.</p></div>
+    </div>
+
+    <div class="pillar">
+      <div class="txt"><p class="num">03</p><h2>Every agent, one file</h2>
+        <p class="prose">The same rules.json drove a live block on Claude Code, Codex, and OpenCode — three
+          integration styles, one source of truth. Add a runtime by adding a data row, not a rewrite.</p></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">rules.json — authored once</span></div>
+        <div class="body"><span class="l c-cy">{</span><span class="l">  <span class="c-yel">"id"</span>: <span class="c-grn">"protect-shared-branch"</span>,</span><span class="l">  <span class="c-yel">"match"</span>: { <span class="c-yel">"capability"</span>: <span class="c-grn">"git.push_protected"</span> },</span><span class="l">  <span class="c-yel">"action"</span>: <span class="c-grn">"ask"</span>,</span><span class="l">  <span class="c-yel">"backstop"</span>: <span class="c-grn">"remote-branch-protection"</span></span><span class="l c-cy">}</span></div>
+      </div>
+    </div>
+  </div></div>
+
+  
+  <div class="band"><div class="wrap sec">
+    <p class="eyebrow">How it works</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Install &amp; attach</h3><p style="font-size:14px;margin:2px 0">One command, then <span style="font-family:var(--mono)">crossing attach</span> wires the hooks into each agent you use.</p></div>
+      <div class="step"><div class="n">2</div><h3>Write one rule</h3><p style="font-size:14px;margin:2px 0">Pick from the library or write a capability + action. It compiles to every agent's seam automatically.</p></div>
+      <div class="step"><div class="n">3</div><h3>See the coverage</h3><p style="font-size:14px;margin:2px 0">The report shows what's enforced, best-effort, or unsupported — per agent. No surprises, no bluffing.</p></div>
+    </div>
+  </div></div>
+
+  
+  <div class="band grassband"><div class="wrap sec">
+    <div class="proof">
+      <div class="proofstat"><b>3</b> agents, proven live<br><span class="fine">Claude Code · Codex · OpenCode</span></div>
+      <div class="proofstat"><b>1</b> rule file<br><span class="fine">3 model families, 3 integration styles</span></div>
+      <div class="proofstat"><b>0</b> bytes to a vendor<br><span class="fine">local-first, non-logging fallback</span></div>
+      <div><a class="btn-ghost" href="#" onclick="go('compare');return false">Read the probes →</a></div>
+    </div>
+    <p class="fine">No user-count to quote yet — so here's proof of work instead of proof of a crowd. Every claim above links to a probe you can run.</p>
+  </div></div>
+
+  
+  <div class="band"><div class="wrap sec">
+    <div class="pillar">
+      <div class="txt">
+        <p class="eyebrow">Never get stuck</p>
+        <h2>Your usage limit resets in five hours.<br>Your deadline doesn't.</h2>
+        <p class="prose">When one agent hits the wall mid-task, the paddle goes up — and your session,
+          memory, and rules cross to another agent or a local model. Keep working.</p>
+        <p style="margin-top:14px"><a class="btn-ghost" href="#" onclick="go('limits');return false">See the limits board →</a></p>
+      </div>
+      <div class="panel walled" style="margin:0"><div class="ph">When the meter runs out</div><div class="pb">
+        <p style="display:flex;align-items:center;gap:9px;margin:2px 0">
+          <svg width="22" height="26" viewBox="0 0 30 34" aria-hidden="true"><rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/><polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/></svg>
+          <span class="v v-stop">At limit</span> <span class="fine">Claude Max · resets 4h 51m</span></p>
+        <div class="meter"><i style="width:100%"></i></div>
+        <p style="font-size:14px;margin-top:8px"><b>Cross to Codex →</b> session + memory + rules travel with you.</p>
+      </div></div>
+    </div>
+  </div></div>
+
+  
+  <div class="band alt"><div class="wrap sec">
+    <p class="eyebrow">For the team lead who has to answer for it</p>
+    <h2>Honest governance, not a checkbox</h2>
+    <div class="steps" style="margin-top:8px">
+      <div class="step"><h3>Author once, enforce everywhere</h3><p style="font-size:14px">Org policy is a signed, versioned bundle — org &gt; repo &gt; user, tighten-only. Compiles locally; the server just distributes it.</p></div>
+      <div class="step"><h3>Coverage you can audit</h3><p style="font-size:14px">Every rule renders its real enforcement per agent. A security review reads the report, not the marketing.</p></div>
+      <div class="step"><h3>Run it yourself</h3><p style="font-size:14px">Self-host the whole thing, with any future managed service subject to a separate announcement. License and contribution terms are being finalized.</p></div>
+    </div>
+    <p class="prose" style="font-style:italic;margin-top:14px">We didn't put Open in the name. We put it in the license.</p>
+  </div></div>
+
+  
+  <div class="band"><div class="wrap sec">
+    <p class="eyebrow">The Comparison Lab</p>
+    <h2>Choosing between agents? We ran the same task on each.</h2>
+    <p class="sub" style="max-width:60ch">Reproducible head-to-heads — same repo, same rules, same session-carry test — with probe artifacts attached. Updated when the probes re-run.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Matchup</th><th>US searches/mo</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#" onclick="go('compare');return false">Codex vs Claude Code</a></td><td class="num2">13,600</td><td><span class="v v-enf">Probe-backed</span></td></tr>
+        <tr><td><a href="#" onclick="go('compare');return false">OpenCode vs Claude Code</a></td><td class="num2">3,150</td><td><span class="v v-enf">Probe-backed</span></td></tr>
+        <tr><td><a href="#" onclick="go('compare');return false">Gemini CLI vs Claude Code</a></td><td class="num2">2,200</td><td><span class="v v-adv">Registered</span></td></tr>
+      </tbody>
+    </table></div>
+    <p><a class="btn-ghost" href="#" onclick="go('compare');return false">See all comparisons →</a></p>
+  </div></div>
+
+  
+  <div class="band grassband"><div class="finalcta">
+    <h2>Put a guard at the crossing.</h2>
+    <p class="sub" style="margin:0 auto">Open-source release in preparation. Explore the design and proposed workflows.</p>
+    <div class="heroctas">
+      <a class="btn" href="#release-status" onclick="go('home')">Release status</a>
+      <a class="btn-ghost" href="#" onclick="go('reference');return false">Read the docs →</a>
+    </div>
+  </div></div>
+</div>
+
+
+<div class="page" id="p-agents" role="tabpanel" aria-labelledby="t-agents">
+  <div class="band alt"><div class="wrap sec">
+    <p class="crumb"><a href="#" onclick="go('home');return false">Home</a> › Agents</p>
+    <p class="eyebrow">One memory. One rulebook. Your own agents.</p>
+    <h1>Your workflow.<br>Your supporting cast.</h1>
+    <p class="sub">Bring reviewer, helper, and follower agents into the coding workflow you already use. Choose the models behind the roles. Give each a job worth doing.</p>
+    <p class="agent-note"><b>Marketing concept.</b> Role examples explain the intended experience, not a live demonstration or a release support promise. Spontaneous Memory below is a proposed capability.</p>
+    <div class="heroctas"><a class="btn" href="#agent-roles">Meet the supporting cast ↓</a><a class="btn-ghost" href="#spontaneous-memory">The spontaneous “aha” ↓</a></div>
+  </div></div>
+
+  <div class="band"><div class="wrap sec" id="agent-roles">
+    <h2>Your main agent doesn't have to do every job.</h2>
+    <p class="agent-lead">A second perspective. A focused pair of hands. Someone keeping an eye on the bigger picture. Different roles, working around the same task.</p>
+    <div class="steps">
+      <div class="step"><p class="num">01 · REVIEWER</p><h3>Another set of eyes.</h3><p>Bring in an agent to examine changes, question assumptions, and surface issues before you move on.</p><p class="agent-note"><b>Example brief:</b> “Review this change for failure paths and explain what needs attention.”</p></div>
+      <div class="step"><p class="num">02 · HELPER</p><h3>A job of its own.</h3><p>Give a helper a bounded task alongside the main work: investigate a question, check an assumption, or prepare a focused result.</p><p class="agent-note"><b>Example brief:</b> “Check the relevant documentation and report the constraints.”</p></div>
+      <div class="step"><p class="num">03 · FOLLOWER</p><h3>The wider view.</h3><p>Have a follower track work as it develops and contribute observations without taking over the main task.</p><p class="agent-note"><b>Example brief:</b> “Watch for decisions that conflict with the project's earlier direction.”</p></div>
+    </div>
+  </div></div>
+
+  <div class="band alt"><div class="wrap sec">
+    <h2>Your logic, at the agent's hooks.</h2>
+    <p class="agent-lead">At the heart is the open-source framework we're preparing for release: a place to connect your own code to supported events in the AI workflow.</p>
+    <div class="pillar">
+      <div><h3>Define the job. Choose the model.</h3><p>Use different models for different roles across supported providers. A reviewer needn't use the same model as the agent doing the work.</p><p>Give each role instructions, relevant context, and a clear scope. The framework is the foundation; the frontend is where those roles and their work become visible.</p></div>
+      <div class="panel"><div class="ph">The framework idea</div><div class="pb"><p><b>When this happens…</b><br>A supported event makes relevant work available.</p><p><b>…run your logic…</b><br>A check, a reviewer, or another focused contribution.</p><p><b>…within its authority.</b><br>Advice, observation, and permission to act are different things.</p></div></div>
+    </div>
+    <p class="agent-note">Provider choice depends on available integrations and credentials. Triggers, context access, execution and delivery vary by role and runtime; this concept does not promise arbitrary-provider compatibility or identical controls everywhere.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap sec" id="framework-configuration">
+    <p class="eyebrow">The framework and your configuration</p>
+    <h2>The machinery is shared. The workflow is yours.</h2>
+    <p class="agent-lead">Crossing Guard provides the mechanisms. Your configuration describes how you want to use them. You don't have to adopt our development process to use the framework.</p>
+    <div class="steps">
+      <div class="step"><h3>Framework</h3><p>The connections to supported agent hooks, the machinery for running checks and evaluating rules, and the records of what happened. It defines the available capabilities and their boundaries.</p></div>
+      <div class="step"><h3>Configuration</h3><p>Your chosen models, agent instructions, selected rules, and workflow criteria. What should a reviewer look for? Which facts matter to your project? Those choices belong to you, not hidden inside the framework.</p></div>
+      <div class="step"><h3>Custom code</h3><p>When existing mechanisms aren't enough, extend the framework at supported integration points. Add a check or integration, then configure how your workflow uses it.</p></div>
+    </div>
+    <div class="panel"><div class="ph">One reviewer, different projects · illustrative example</div><div class="pb"><p><b>Shared mechanism:</b> run a reviewer and record its findings.</p><p><b>Your configuration:</b> choose its model and instructions—review database changes for one project, accessibility for another.</p><p><b>An extension when needed:</b> connect a project-specific checker through a supported integration point.</p></div></div>
+    <h3>The frontend makes those choices visible.</h3>
+    <p>The interface brings configuration and results together: what is selected, which agent contributed, and what it reported. Available controls depend on the implemented role and integration; configuration is not a promise that every option has a visual editor.</p>
+    <p class="agent-note">A supplied configuration pack is a starting point, not a mandatory workflow. Configuration cannot create a missing hook, enable unsupported live interruption, or grant an agent authority by itself. Spontaneous Memory's proposed delivery choices remain subject to those same boundaries.</p>
+  </div></div>
+
+  <div class="band memory-band"><div class="wrap sec" id="spontaneous-memory">
+    <p class="eyebrow">Spontaneous Memory · proposed concept</p>
+    <h2>The “aha” you didn't know to ask for.</h2>
+    <p class="agent-lead">Your main agent follows the task. A memory follower looks beyond that immediate context for a past decision, forgotten constraint, or relevant lesson that could change the work.</p>
+    <p>It isn't only remembering what you asked it to remember. It's making a useful connection to knowledge outside the main line of context—and bringing it back when it matters.</p>
+    <blockquote class="agent-example">“Before you continue: we tried this approach before. Here's why we changed it.”</blockquote>
+    <p class="agent-note">Illustrative message, not an actual retrieved memory or product transcript.</p>
+    <div class="steps">
+      <div class="step"><h3>At a workflow event</h3><p>Surface an insight at a supported checkpoint, when the working agent has an opportunity to use it.</p></div>
+      <div class="step"><h3>During the work</h3><p>For an important insight, interrupt the working agent where live delivery is supported and explicitly authorized.</p></div>
+    </div>
+    <details><summary>Will a memory always interrupt my agent?</summary><p>No. Event-triggered delivery, queued messages, and live interruption are different capabilities. An event or queued delivery must not be presented as an immediate interruption. Spontaneous Memory and its delivery behavior need implementation and runtime-specific verification before a release claim.</p></details>
+    <details><summary>Does an “aha” give the follower permission to act?</summary><p>No. A relevant memory is context, not an instruction with higher authority. The follower's contribution remains separate from permission to approve, change files, or control another agent.</p></details>
+  </div></div>
+
+  <div class="band"><div class="wrap sec">
+    <h2>Same workflow. More perspective.</h2>
+    <p class="agent-lead">Shared memory, shared rules, and your own supporting agents. The crossing guard stays at the intersection; you decide who joins the work.</p>
+    <a class="btn-ghost" href="#" onclick="go('home');return false">Back to Crossing Guard →</a>
+  </div></div>
+</div>
+
+
+<div class="page" id="p-compare" role="tabpanel"><div class="wrap sec">
+  <p class="crumb"><a href="#" onclick="go('home');return false">Home</a> › Compare</p>
+  <h1 style="font-size:28px">Claude Code vs Codex, measured</h1>
+  <p class="sub" style="max-width:64ch">Same task, same rule file, same session-carry test on every agent — each claim
+    linked to a probe you can run yourself. Updated when probes re-run, and every page says when. No vibes.
+    No affiliate links. Bring a snack.</p>
+  
+  <h2 style="margin-top:22px">The matrix</h2>
+  <p class="prose" style="font-size:14.5px">Cells ship only where probes actually run — anything else is one more opinion listicle, and the internet is stocked.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Matchup</th><th>US/mo</th><th>KD</th><th>CPC</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#release-status" onclick="go('home')">Codex vs Claude Code</a></td><td class="num2">13,600</td><td class="num2">8–16</td><td class="num2">$30.00</td><td><span class="v v-enf">Probe-backed</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">Claude Code vs Cursor</a></td><td class="num2">11,900</td><td class="num2">5–12</td><td class="num2">$7.00</td><td><span class="v v-best">Partial</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">OpenCode vs Claude Code</a></td><td class="num2">3,150</td><td class="num2">7</td><td class="num2">$3.50</td><td><span class="v v-enf">Probe-backed</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">Claude Code vs GitHub Copilot</a></td><td class="num2">2,650</td><td class="num2">1–4</td><td class="num2">$6.00</td><td><span class="v v-adv">Registered</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">Gemini CLI vs Claude Code</a></td><td class="num2">2,200</td><td class="num2">9</td><td class="num2">$5.00</td><td><span class="v v-adv">Registered</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">Codex vs Cursor</a></td><td class="num2">1,300</td><td class="num2">3–6</td><td class="num2">$25.00</td><td><span class="v v-adv">Watch list</span></td></tr>
+    </tbody>
+  </table></div>
+  <h2 style="margin-top:22px">What we measure that nobody else does</h2>
+  <div class="panel"><div class="ph">Probe · rule enforcement at the hook seam</div><div class="pb"><p>Same "never push to main" rule on each runtime's own hooks — who blocks, who asks, who times out open. <span class="v v-enf">Enforced</span> / <span class="v v-best">Best-effort</span> straight from the coverage report.</p></div></div>
+  <div class="panel"><div class="ph">Probe · session carry</div><div class="pb"><p>Kill it mid-task, resume elsewhere. What survives? With our layer: files, memory, and rules do.</p></div></div>
+  <p class="prose" style="font-style:italic">"Yes, even the expensive ones stop."</p>
+</div></div>
+
+
+<div class="page" id="p-reference" role="tabpanel"><div class="wrap sec">
+  <p class="crumb"><a href="#" onclick="go('home');return false">Home</a> › Reference</p>
+  <h1 style="font-size:28px">The power-user reference</h1>
+  <p class="sub" style="max-width:64ch">Hooks, memory, context files, session formats — researched across Claude Code, Codex, and OpenCode, side by side, with the differences that actually bite.</p>
+  
+  <div class="tablewrap"><table>
+    <caption>The shelf</caption>
+    <thead><tr><th>Page</th><th>Target term</th><th>Vol/mo</th><th>KD</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#release-status" onclick="go('home')">Claude Code memory, actually explained</a></td><td>claude code memory</td><td class="num2">1,000</td><td class="num2">7</td><td><span class="v v-enf">Ships</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">Hooks: the complete seam map</a></td><td>claude code hooks</td><td class="num2">2,800</td><td class="num2">25</td><td><span class="v v-enf">Ships</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">CLAUDE.md — what loads, when, how big</a></td><td>claude md</td><td class="num2">1,200</td><td class="num2">8</td><td><span class="v v-best">Draft</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">MCP config across runtimes</a></td><td>claude code mcp</td><td class="num2">3,900</td><td class="num2">35</td><td><span class="v v-adv">Planned</span></td></tr>
+      <tr><td><a href="#release-status" onclick="go('home')">Skills, cross-vendor</a></td><td>claude code skills</td><td class="num2">8,800</td><td class="num2">59</td><td><span class="v v-adv">Long game</span></td></tr>
+    </tbody>
+  </table></div>
+  <h2>Why trust this</h2>
+  <p class="prose">Every page cites its probe. When a vendor changes a seam, the canary flips and the page updates with a dated changelog. The research came first — this site publishes the homework behind the tool.</p>
+</div></div>
+
+
+<div class="page" id="p-limits" role="tabpanel"><div class="wrap sec">
+  <p class="crumb"><a href="#" onclick="go('home');return false">Home</a> › Limits</p>
+  <h1 style="font-size:28px">Usage limits, explained live</h1>
+  <p class="sub" style="max-width:64ch">What counts against every plan's meter, when it resets, what you lose mid-task — and how to walk your work across instead of waiting at the wall.</p>
+  
+  <h2 style="margin-top:20px">The board <span class="fine">(mock data — page concept)</span></h2>
+  <div class="panel walled"><div class="ph">Claude Code · Max</div><div class="pb">
+    <p style="display:flex;align-items:center;gap:9px"><svg width="22" height="26" viewBox="0 0 30 34" aria-hidden="true"><rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/><polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/></svg><span class="v v-stop">At limit</span> <span class="fine">the paddle is up</span></p>
+    <div class="meter"><i style="width:100%"></i></div>
+    <p class="fine">resets 4h 51m · 5-hour window · opus counts ~5× sonnet</p>
+    <p style="font-size:14px"><b>Your session doesn't have to wait:</b> <a href="#release-status" onclick="go('home')">carry it across →</a></p>
+  </div></div>
+  <div class="panel"><div class="ph">Codex · Plus</div><div class="pb"><p><span class="v v-enf">Open</span></p><div class="meter"><i style="width:34%"></i></div><p class="fine">34% of window · weekly cap separate · resets Thu 09:00</p></div></div>
+  <div class="panel"><div class="ph">Local · Ollama</div><div class="pb"><p><span class="v v-enf">No meter</span></p><div class="meter"><i style="width:4%"></i></div><p class="fine">your machine, your rules · slower, private, always open</p></div></div>
+  <h2 style="margin-top:22px">Asked constantly</h2>
+  <details open><summary>Is Claude Code free?</summary><p>No free tier — it rides a Claude subscription (Pro/Max) or API billing. Free: this page's plan math, and the open-source layer that carries your work when the meter runs out. </p></details>
+  <details><summary>What happens when I hit the limit mid-task?</summary><p>Natively the session freezes and context is stranded until reset. With a crossing guard: session, memory, and rules walk across to another agent — or a local model — and work continues.</p></details>
+  <details><summary>Is Codex down?</summary><p>In the real build this is a live status check, not an essay. </p></details>
+</div></div>
+
+<div class="crosswalk"></div>
+<footer>
+  <div class="cols2">
+    <div class="fc"><h4>Agents</h4><ul><li><a href="#" onclick="go('agents');return false">Your supporting cast</a></li><li><a href="#spontaneous-memory" onclick="go('agents')">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h4>Compare</h4><ul><li><a href="#" onclick="go('compare');return false">Codex vs Claude Code</a></li><li><a href="#" onclick="go('compare');return false">The matrix</a></li><li><a href="#release-status" onclick="go('home')">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h4>Reference</h4><ul><li><a href="#" onclick="go('reference');return false">Memory</a></li><li><a href="#" onclick="go('reference');return false">Hooks</a></li><li><a href="#" onclick="go('reference');return false">CLAUDE.md</a></li></ul></div>
+    <div class="fc"><h4>Limits</h4><ul><li><a href="#" onclick="go('limits');return false">The board</a></li><li><a href="#" onclick="go('limits');return false">Plan math</a></li><li><a href="#" onclick="go('limits');return false">The escape hatch</a></li></ul></div>
+    <div class="fc"><h4>Project</h4><ul><li><a href="#release-status" onclick="go('home')">GitHub</a></li><li><a href="#release-status" onclick="go('home')">Coverage honesty</a></li><li><a href="#release-status" onclick="go('home')">Open Crossing</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. ·
+    <i>Design preview: examples, metrics and support labels are illustrative. Licensing and release details are not final.</i></div>
+</footer>
+
+<script>
+  function go(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+    var el=document.getElementById('p-'+id); if(el) el.classList.add('on');
+    document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected', b.id==='t-'+id));
+    window.scrollTo({top:0});
+  }
+  function spec(btn){ btn.nextElementSibling.classList.toggle('on'); }
+</script>
