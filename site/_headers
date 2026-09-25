@@ -1,3 +1,8 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+/styleguide/*
+  X-Robots-Tag: noindex

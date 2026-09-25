@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style guide — Crossing Guard</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="28" height="32" viewBox="0 0 30 34" aria-hidden="true">
+      <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+      <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+      <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec">
+    <p class="crumb"><a href="/">Home</a> › Style guide</p>
+    <p class="eyebrow">For contributors</p>
+    <h1>Site style guide</h1>
+    <p class="sub" style="max-width:64ch">The tokens and components this site is built from, with the rules for using them. Everything here lives in one stylesheet, <code>/assets/site.css</code>. The rules for writing tutorials are in <code>TUTORIALS.md</code> in the site repository.</p>
+  </div></div>
+
+  <div class="wrap sec">
+    <h2 id="colour">Colour</h2>
+    <p>The palette is a sunny street: white paper, sky blue sections, green for things that work, and the stop-paddle red only for something that is actually stopped. The fluorescent yellow-green always sits on or beside a dark border.</p>
+    <ul class="swatches">
+      <li><div class="chip" style="background:var(--paper)"></div><span>--paper</span></li>
+      <li><div class="chip" style="background:var(--sky)"></div><span>--sky</span></li>
+      <li><div class="chip" style="background:var(--sky-head)"></div><span>--sky-head</span></li>
+      <li><div class="chip" style="background:var(--ink)"></div><span>--ink</span></li>
+      <li><div class="chip" style="background:var(--ink-2)"></div><span>--ink-2</span></li>
+      <li><div class="chip" style="background:var(--ink-3)"></div><span>--ink-3</span></li>
+      <li><div class="chip" style="background:var(--fyg);box-shadow:inset 0 0 0 2px var(--ink)"></div><span>--fyg</span></li>
+      <li><div class="chip" style="background:var(--grass)"></div><span>--grass</span></li>
+      <li><div class="chip" style="background:var(--ask)"></div><span>--ask</span></li>
+      <li><div class="chip" style="background:var(--stop)"></div><span>--stop</span></li>
+      <li><div class="chip" style="background:var(--link)"></div><span>--link</span></li>
+      <li><div class="chip" style="background:var(--term-bg)"></div><span>--term-bg</span></li>
+    </ul>
+    <p>Focus rings use <code>--focus</code> on light surfaces and <code>--focus-on-dark</code> in the footer, on the dark Learn tab and on code blocks, so they reach 3:1 against whatever is behind them.</p>
+
+    <h2 id="type">Type</h2>
+    <div class="specimen">
+      <p class="eyebrow">Eyebrow, an uppercase label</p>
+      <p style="font:bold 34px/1.1 var(--ui);margin:0 0 8px">Page heading, Helvetica bold</p>
+      <p style="font:bold 22px/1.2 var(--ui);margin:0 0 8px">Section heading</p>
+      <p class="lede">Lede: a Georgia paragraph that says what the page gives the reader.</p>
+      <p class="prose">Prose is set in Georgia. Interface text, labels and tables use Helvetica, and <code>code</code>, paths and data use Menlo.</p>
+      <p class="fine">fine print · dates · measurements</p>
+    </div>
+
+    <h2 id="navigation">Navigation and actions</h2>
+    <p>Every page has the same header and footer; only <code>aria-current</code> changes. Navigation uses plain links and works without JavaScript.</p>
+    <div class="specimen">
+      <p class="heroctas" style="margin:0"><a class="btn" href="/learn/">Primary action</a> <a class="btn-ghost" href="/learn/">Secondary action →</a></p>
+    </div>
+
+    <h2 id="labels">Labels</h2>
+    <h3>Strength labels</h3>
+    <p>A strength label says how strongly a capability holds. Use them in support tables, not as decoration.</p>
+    <div class="specimen">
+      <span class="v v-enf">Enforced</span> <span class="v v-best">Best-effort</span> <span class="v v-adv">Advisory</span> <span class="v v-stop">At limit</span>
+    </div>
+    <h3>Evidence labels</h3>
+    <p>An evidence label says how we know a sentence is true, and goes straight after that sentence. Advice and explanation carry no label.</p>
+    <div class="specimen">
+      <p>Seen on a real install. <span class="ev ev-observed">Observed</span></p>
+      <p>Read in the product code but not exercised. <span class="ev ev-source">In source (not yet public)</span></p>
+      <p>Stated in the vendor's documentation. <span class="ev ev-vendor">Vendor docs</span></p>
+      <p>Not confirmed; explained under "What we haven't verified". <span class="ev ev-unverified">Not verified</span></p>
+    </div>
+
+    <h2 id="long-form">Long-form components</h2>
+    <h3>Verified-on panel</h3>
+    <aside class="verified" aria-label="Example verified-on panel">
+      <p class="vh">Verified on</p>
+      <dl><dt>Runtime</dt><dd>Example Runtime 1.2.3 (macOS)</dd><dt>Vendor docs</dt><dd>Read 2026-01-01</dd></dl>
+    </aside>
+    <h3>Contents list</h3>
+    <nav class="toc" aria-label="Example contents list" style="position:static">
+      <p>On this page</p>
+      <ol><li><a href="#colour">Colour</a></li><li><a href="#type">Type</a></li></ol>
+    </nav>
+    <h3>Code</h3>
+    <p>Caption every code block with the file it belongs in or the shell it runs in, and never show command output you did not see.</p>
+    <figure class="code">
+      <figcaption id="code-1">~/.example/config.json</figcaption>
+      <pre tabindex="0" aria-labelledby="code-1"><code>{ "hooks": { "PreToolUse": [] } }</code></pre>
+    </figure>
+    <h3>Callouts</h3>
+    <aside class="callout note"><p class="ct">Note</p><p>Context the reader can skip.</p></aside>
+    <aside class="callout caution"><p class="ct">Caution</p><p>Something that can surprise the reader or cost them time.</p></aside>
+    <aside class="callout limit"><p class="ct">Limit</p><p>Something that does not work, is blocked or is not enforced. Red is used for nothing else.</p></aside>
+    <h3>Flow</h3>
+    <ol class="flow">
+      <li>One step, written as a sentence.</li>
+      <li>The next step, numbered in order and joined to the one before by a line.</li>
+    </ol>
+    <h3>Table</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Column</th><th>Column</th></tr></thead>
+      <tbody><tr><td>Alternate rows are shaded</td><td>Wide tables scroll inside their box on phones</td></tr><tr><td>Second row</td><td>…</td></tr></tbody>
+    </table></div>
+    <h3>Disclosure</h3>
+    <details><summary>A question readers ask</summary><p>The answer, which opens without JavaScript.</p></details>
+    <h3>Series navigation</h3>
+    <nav class="series" aria-label="Example series navigation">
+      <a class="prev" href="/learn/"><small>Previous</small>The tutorial before</a>
+      <a class="next" href="/learn/"><small>Next</small>The tutorial after</a>
+    </nav>
+
+    <h2 id="rules">Rules</h2>
+    <ul class="rules">
+      <li>Say what was verified, on which versions, and when. If a claim can't be backed, weaken it or remove it.</li>
+      <li>Don't use absolutes such as <q class="term">tamper-proof</q>, <q class="term">prevents all leaks</q> or <q class="term">complete visibility</q>. The site check rejects them unless they are quoted like this.</li>
+      <li>Use red only for stopped or unsupported states. The fluorescent yellow-green always has a dark border or dark text.</li>
+      <li>Don't use vendor logos or marks; write vendor names as plain text.</li>
+      <li>Don't load external fonts, scripts, images or analytics, and keep every page working without JavaScript.</li>
+      <li>The illustrative terminal window belongs on marketing pages. Tutorials use captioned code blocks and never show made-up output.</li>
+      <li>Write the product name as Crossing Guard in prose and <code>crossing-guard</code> as a command.</li>
+      <li>In tutorial prose, don't use dashes, <q class="term">not just X but Y</q> contrasts, bold labels at the start of list items, or stock phrases such as <q class="term">here's the thing</q>. The site check flags these; <code>TUTORIALS.md</code> explains the full voice rules.</li>
+    </ul>
+  </div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Claude Code, Codex and OpenCode hooks</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>
