@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Claude Code loads CLAUDE.md, and what it costs</title>
+<meta name="description" content="Watch Claude Code load CLAUDE.md files with an InstructionsLoaded hook: at launch, on import, in subfolders and by path rule. Plus what 200 lines cost in tokens.">
+<link rel="canonical" href="https://crossingguard.dev/learn/claude-md/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<meta name="verified-on" content="2026-09-25">
+<meta name="review-by" content="2026-10-25">
+<meta name="tested-versions" content="Claude Code 2.1.280 (terminal); Haiku 4.5; macOS">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How Claude Code loads CLAUDE.md, and what a long one costs", "description": "Watch Claude Code load CLAUDE.md files with an InstructionsLoaded hook: at launch, on import, in subfolders and by path rule. Plus what 200 lines cost in tokens.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://crossingguard.dev/learn/claude-md/", "author": {"@type": "Organization", "name": "Crossing Guard"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M21.07 5.12 A12 12 0 1 0 26.88 10.93" fill="none" stroke="#26262E" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="24.49" cy="7.51" r="2.8" fill="#5F6B0A"/>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/" aria-current="true">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/learn/">Learn</a> › CLAUDE.md</p>
+    <p class="eyebrow">Tutorial · 9 min read · Claude Code</p>
+    <h1>How Claude Code loads CLAUDE.md, and what a long one costs</h1>
+    <p class="lede">Claude Code reads CLAUDE.md files at different moments. Some load at launch, some only when the agent opens a file in their folder, and some are pulled in by another file. A short hook logs each load and its reason, so you can watch it happen. Then we measured what a 200-line CLAUDE.md adds to every session.</p>
+    <aside class="verified" aria-label="What this tutorial was verified on">
+      <p class="vh">Verified on</p>
+      <dl>
+        <dt>Claude Code</dt><dd>2.1.280 in a terminal (macOS), with Haiku 4.5</dd>
+        <dt>Vendor docs</dt><dd>Anthropic's memory and hooks documentation, read 2026-09-25</dd>
+      </dl>
+      <p class="legend">Each factual sentence carries a label saying how we know it:
+        <span class="ev ev-observed">Observed</span> we ran it on a real install ·
+        <span class="ev ev-vendor">Vendor docs</span> the vendor's current documentation says so ·
+        <span class="ev ev-unverified">Not verified</span> we have not confirmed it.</p>
+    </aside>
+  </div></div>
+
+  <div class="wrap article-layout">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#when">When each file loads</a></li>
+        <li><a href="#watch">Log every load with a hook</a></li>
+        <li><a href="#try-it">Try it</a></li>
+        <li><a href="#cost">What a long file costs</a></li>
+        <li><a href="#not-verified">What we haven't verified</a></li>
+      </ol>
+    </nav>
+
+    <article class="article">
+      <section>
+        <h2 id="when">When each file loads</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th>File</th><th>Loads</th></tr></thead>
+          <tbody>
+            <tr><td><code>CLAUDE.md</code> and <code>CLAUDE.local.md</code> in the folder you launch from and in every parent folder, plus <code>~/.claude/CLAUDE.md</code></td><td>At launch</td></tr>
+            <tr><td>A file named in one of those with <code>@path</code></td><td>At launch, with the file that names it. Relative paths start from that file, and imports can nest four deep</td></tr>
+            <tr><td><code>.claude/rules/*.md</code> without <code>paths:</code></td><td>At launch</td></tr>
+            <tr><td><code>CLAUDE.md</code> in a subfolder</td><td>When Claude reads a file in that subfolder</td></tr>
+            <tr><td><code>.claude/rules/*.md</code> with <code>paths:</code></td><td>When Claude reads a file that matches</td></tr>
+          </tbody>
+        </table></div>
+        <p>Every file that loads is added to the context, from the filesystem root down to your folder; none of them replaces another. After <code>/compact</code>, Claude Code reads the project's root CLAUDE.md again from disk, and subfolder files come back as Claude reads files there. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="watch">Log every load with a hook</h2>
+        <p>Claude Code fires an <code>InstructionsLoaded</code> hook event each time one of these files loads. The event carries the file's path, its scope (<code>User</code>, <code>Project</code>, <code>Local</code> or <code>Managed</code>) and a <code>load_reason</code>: <code>session_start</code>, <code>include</code>, <code>nested_traversal</code>, <code>path_glob_match</code> or <code>compact</code>. Lazy loads also name the file that triggered them, and imports name their parent. The hook can't block or change a load. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>Register it in the project's settings:</p>
+        <figure class="code">
+          <figcaption id="code-1">.claude/settings.json</figcaption>
+          <pre tabindex="0" aria-labelledby="code-1"><code>{
+  "hooks": {
+    "InstructionsLoaded": [
+      { "hooks": [ { "type": "command",
+                     "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/log-instructions.py\"" } ] }
+    ]
+  }
+}</code></pre>
+        </figure>
+        <p>The script writes one line per load, with paths relative to the project:</p>
+        <figure class="code">
+          <figcaption id="code-2">.claude/log-instructions.py</figcaption>
+          <pre tabindex="0" aria-labelledby="code-2"><code>#!/usr/bin/env python3
+# Append one line per instruction file Claude Code loads, with the reason.
+import json, os, sys
+e = json.load(sys.stdin)
+root = os.environ.get("CLAUDE_PROJECT_DIR", "")
+rel = lambda p: os.path.relpath(p, root) if p and p.startswith(root) else p
+line = {k: rel(e.get(k)) for k in ("file_path", "trigger_file_path", "parent_file_path") if e.get(k)}
+line.update(load_reason=e.get("load_reason"), memory_type=e.get("memory_type"))
+with open(os.path.join(root, ".claude", "instructions.log"), "a") as f:
+    f.write(json.dumps(line) + "\n")</code></pre>
+        </figure>
+      </section>
+
+      <section>
+        <h2 id="try-it">Try it</h2>
+        <p>Our test project had a root CLAUDE.md that imports a review guide, a CLAUDE.md in <code>web/</code>, and a SQL rule that applies only to <code>db/</code>:</p>
+        <figure class="code">
+          <figcaption id="code-3">The instruction files</figcaption>
+          <pre tabindex="0" aria-labelledby="code-3"><code>==&gt; CLAUDE.md &lt;==
+# Shop
+
+- Use pnpm, not npm.
+- Run the tests with `pnpm test` before you say a change is done.
+
+@docs/review.md
+
+==&gt; docs/review.md &lt;==
+# Code review
+
+End every code review with a section called "Open questions".
+
+==&gt; web/CLAUDE.md &lt;==
+# Web
+
+Components in web/ use the `ui-` class prefix.
+
+==&gt; .claude/rules/sql.md &lt;==
+---
+paths:
+  - "db/**/*.sql"
+---
+Write SQL keywords in lowercase.</code></pre>
+        </figure>
+        <p>We ran three prompts, each in a new session, and emptied the log between them. <span class="ev ev-observed">Observed</span></p>
+        <h3>1. A question the instructions answer</h3>
+        <figure class="code">
+          <figcaption id="code-4">Prompt and log</figcaption>
+          <pre tabindex="0" aria-labelledby="code-4"><code>claude -p "Which package manager does this project use, and how should a code review end? Answer from your instructions only. Don't read any files."
+
+{"file_path": "docs/review.md", "parent_file_path": "CLAUDE.md", "load_reason": "include", "memory_type": "Project"}
+{"file_path": "CLAUDE.md", "load_reason": "session_start", "memory_type": "Project"}</code></pre>
+        </figure>
+        <p>Claude answered pnpm and an "Open questions" section. The root file and its import loaded at launch, and nothing from <code>web/</code> or <code>db/</code> did. The import was logged before its parent. In the third run the order was reversed, so don't read meaning into the order of lines. <span class="ev ev-observed">Observed</span></p>
+        <h3>2. Reading a file in a subfolder</h3>
+        <figure class="code">
+          <figcaption id="code-5">Prompt and the new log line</figcaption>
+          <pre tabindex="0" aria-labelledby="code-5"><code>claude -p "Read web/button.html. Which class prefix should new components in that folder use, and where did that rule come from?"
+
+{"file_path": "web/CLAUDE.md", "trigger_file_path": "web/button.html", "load_reason": "nested_traversal", "memory_type": "Project"}</code></pre>
+        </figure>
+        <p><code>web/CLAUDE.md</code> loaded only when Claude read <code>web/button.html</code>, and Claude named it as the source of the <code>ui-</code> prefix. <span class="ev ev-observed">Observed</span></p>
+        <h3>3. A rule scoped to a path</h3>
+        <figure class="code">
+          <figcaption id="code-6">Prompt and the new log line</figcaption>
+          <pre tabindex="0" aria-labelledby="code-6"><code>claude -p "Read db/orders.sql. Is its style consistent with this project's SQL rule? Say where the rule came from."
+
+{"file_path": ".claude/rules/sql.md", "trigger_file_path": "db/orders.sql", "load_reason": "path_glob_match", "memory_type": "Project"}</code></pre>
+        </figure>
+        <p>The SQL rule loaded when Claude opened a file matching <code>db/**/*.sql</code>, and not before. <span class="ev ev-observed">Observed</span> When a rule seems to be ignored, this log tells you whether it loaded at all, which is the first thing to rule out.</p>
+      </section>
+
+      <section>
+        <h2 id="cost">What a long file costs</h2>
+        <p>Anthropic suggests keeping each CLAUDE.md under 200 lines, and Claude Code skips any file over 4&nbsp;MiB. <span class="ev ev-vendor">Vendor docs</span> To put a number on it, we wrote 200 lines of made-up coding rules (20.4&nbsp;KB) and sent the prompt "Reply with OK." from four otherwise identical projects. We added up the input tokens Claude Code reported, cached and uncached. <span class="ev ev-observed">Observed</span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Where the 200 lines were</th><th>Input tokens</th><th>Added</th></tr></thead>
+          <tbody>
+            <tr><td>Nowhere (a three-line CLAUDE.md)</td><td>37,264</td><td></td></tr>
+            <tr><td>In the root CLAUDE.md</td><td>42,668</td><td>5,404</td></tr>
+            <tr><td>In <code>docs/big.md</code>, imported from the root file</td><td>42,769</td><td>5,505</td></tr>
+            <tr><td>In <code>web/CLAUDE.md</code>, and nothing in <code>web/</code> was read</td><td>37,275</td><td>11</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>The 200 lines cost about 5,400 tokens on every request of every session, before you've typed anything.</li>
+          <li>Moving text into an import tidies the file, but the imported text loads at launch too, so it costs the same.</li>
+          <li>Text in a subfolder's CLAUDE.md, or in a rule with <code>paths:</code>, costs nothing until Claude works in that folder. Instructions that only matter for one part of the code belong there.</li>
+        </ul>
+        <p>Most of the 37,264 baseline is Claude Code's own system prompt and tool definitions, and it will differ with your tools and settings.</p>
+      </section>
+
+      <section>
+        <h2 id="not-verified">What we haven't verified</h2>
+        <ul>
+          <li>The <code>compact</code> reload after <code>/compact</code>, and <code>CLAUDE.local.md</code> and user-level files, which our test project didn't have.</li>
+          <li><code>AGENTS.md</code> support and the <code>claudeMdExcludes</code> setting.</li>
+          <li>The same runs in the Claude desktop app. It starts the same Claude Code build with your user, project and local settings, as the <a href="/learn/claude-code-hooks/">first tutorial</a> shows, but we ran these only in a terminal. <span class="ev ev-unverified">Not verified</span></li>
+        </ul>
+      </section>
+
+      <nav class="series" aria-label="Series">
+        <a class="prev" href="/learn/claude-code-memory/"><small>Previous</small>What Claude Code remembers between sessions</a>
+        <a class="next" href="/learn/mcp-config/"><small>Next</small>MCP configuration in Claude Code, Codex and OpenCode</a>
+      </nav>
+      <p class="lastverified">Last verified 2026-09-25 · review by 2026-10-25</p>
+    </article>
+  </div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Claude Code remembers between sessions</title>
+<meta name="description" content="What carries over between Claude Code sessions: we asked Claude to remember a preference, opened the auto memory files it wrote, and checked the recall.">
+<link rel="canonical" href="https://crossingguard.dev/learn/claude-code-memory/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<meta name="verified-on" content="2026-09-25">
+<meta name="review-by" content="2026-10-25">
+<meta name="tested-versions" content="Claude Code 2.1.280 (terminal); Sonnet 5; macOS">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "What Claude Code remembers between sessions, and where it keeps it", "description": "What carries over between Claude Code sessions: we asked Claude to remember a preference, opened the auto memory files it wrote, and checked the recall.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://crossingguard.dev/learn/claude-code-memory/", "author": {"@type": "Organization", "name": "Crossing Guard"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M21.07 5.12 A12 12 0 1 0 26.88 10.93" fill="none" stroke="#26262E" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="24.49" cy="7.51" r="2.8" fill="#5F6B0A"/>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/" aria-current="true">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/learn/">Learn</a> › Claude Code memory</p>
+    <p class="eyebrow">Tutorial · 8 min read · Claude Code</p>
+    <h1>What Claude Code remembers between sessions, and where it keeps it</h1>
+    <p class="lede">A new Claude Code session starts with an empty conversation. What carries over is what's on disk: the CLAUDE.md files you write, and an auto memory folder that Claude writes itself. We asked Claude to remember one preference, then opened the files it wrote and checked what a fresh session did with them.</p>
+    <aside class="verified" aria-label="What this tutorial was verified on">
+      <p class="vh">Verified on</p>
+      <dl>
+        <dt>Claude Code</dt><dd>2.1.280 in a terminal (macOS), with Sonnet 5</dd>
+        <dt>Vendor docs</dt><dd>Anthropic's memory documentation, read 2026-09-25</dd>
+      </dl>
+      <p class="legend">Each factual sentence carries a label saying how we know it:
+        <span class="ev ev-observed">Observed</span> we ran it on a real install ·
+        <span class="ev ev-vendor">Vendor docs</span> the vendor's current documentation says so ·
+        <span class="ev ev-unverified">Not verified</span> we have not confirmed it.</p>
+    </aside>
+  </div></div>
+
+  <div class="wrap article-layout">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#three-kinds">Three things that carry over</a></li>
+        <li><a href="#save">Ask Claude to remember something</a></li>
+        <li><a href="#recall">A new session reads it back</a></li>
+        <li><a href="#change">Change your mind</a></li>
+        <li><a href="#control">Review, move or turn it off</a></li>
+        <li><a href="#limits">What memory can't do</a></li>
+        <li><a href="#not-verified">What we haven't verified</a></li>
+      </ol>
+    </nav>
+
+    <article class="article">
+      <section>
+        <h2 id="three-kinds">Three things that carry over</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th></th><th>Who writes it</th><th>When it loads</th></tr></thead>
+          <tbody>
+            <tr><td>The conversation</td><td>You and Claude, as you work</td><td>Only when you resume it with <code>claude --continue</code> or <code>claude --resume</code>. When it fills the context window, Claude Code summarizes it.</td></tr>
+            <tr><td>CLAUDE.md files</td><td>You</td><td>At launch for the project and its parent folders, and later for subfolders. The <a href="/learn/claude-md/">CLAUDE.md tutorial</a> shows this with a hook.</td></tr>
+            <tr><td>Auto memory</td><td>Claude</td><td>The index file, <code>MEMORY.md</code>, loads at the start of every session, up to its first 200 lines or 25&nbsp;KB. The notes it points to load only when Claude reads them.</td></tr>
+          </tbody>
+        </table></div>
+        <p>Each row follows Anthropic's documentation. <span class="ev ev-vendor">Vendor docs</span> Auto memory is on by default, and it lives outside your repository, in <code>~/.claude/projects/&lt;project&gt;/memory/</code>. All worktrees and subfolders of one git repository share the same folder. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="save">Ask Claude to remember something</h2>
+        <p>We made an empty git repository with a two-line CLAUDE.md and sent one prompt:</p>
+        <figure class="code">
+          <figcaption id="code-1">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-1"><code>claude -p "Remember for future sessions in this project: sample customer records should use the city Alder Bay."</code></pre>
+        </figure>
+        <p>Claude answered "Saved. In future sessions on this project, sample customer records will use the city Alder Bay." Before the prompt the memory folder didn't exist. Afterwards it held two files. <span class="ev ev-observed">Observed</span></p>
+        <figure class="code">
+          <figcaption id="code-2">memory/MEMORY.md</figcaption>
+          <pre tabindex="0" aria-labelledby="code-2"><code>- [Sample customer city](sample-customer-city.md) — sample customer records use the city Alder Bay</code></pre>
+        </figure>
+        <figure class="code">
+          <figcaption id="code-3">memory/sample-customer-city.md</figcaption>
+          <pre tabindex="0" aria-labelledby="code-3"><code>---
+name: sample-customer-city
+description: Sample customer records in this project should use the city Alder Bay
+metadata:
+  node_type: memory
+  type: project
+  originSessionId: …
+  modified: 2026-09-25T18:46:43.633Z
+---
+
+Sample/fixture customer records should use the city "Alder Bay".
+
+**Why:** User asked for this to be remembered for future sessions in this project.
+**How to apply:** When generating sample or seed customer data, set the city to Alder Bay.</code></pre>
+        </figure>
+        <p>We shortened the session ID; everything else is as Claude wrote it. The index gets one line per note, and the note itself carries a name, a one-line description and a timestamp. Claude Code adds the <code>modified</code> field whenever Claude writes a note that has frontmatter. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>The folder name is the project's absolute path with every character other than a letter or digit replaced by a hyphen. A repository at <code>/Users/you/code/shop</code> keeps its notes in <code>~/.claude/projects/-Users-you-code-shop/memory/</code>. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="recall">A new session reads it back</h2>
+        <p>We started a fresh session in the same folder and didn't mention the city:</p>
+        <figure class="code">
+          <figcaption id="code-4">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-4"><code>claude -p "Write one sample customer record as JSON with name, email and city. Then tell me in one line where you got the city from."</code></pre>
+        </figure>
+        <p>The record had <code>"city": "Alder Bay"</code>, and Claude said the city came from the saved memory note. It answered in a single turn without opening any file, so the line in <code>MEMORY.md</code> was enough on its own. <span class="ev ev-observed">Observed</span> So when you edit the index, keep the fact itself in the line. In this run the line was all the new session used.</p>
+      </section>
+
+      <section>
+        <h2 id="change">Change your mind</h2>
+        <figure class="code">
+          <figcaption id="code-5">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-5"><code>claude -p "We're switching: sample customer records should use the city Cedar Point from now on."</code></pre>
+        </figure>
+        <p>Claude edited the existing note instead of adding a second one. The folder still held two files, the index line now said Cedar Point, and the note read <code>should use the city "Cedar Point" (previously "Alder Bay")</code>. <span class="ev ev-observed">Observed</span> If you find two notes that disagree, delete the stale one and its index line yourself. The files are plain Markdown. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="control">Review, move or turn it off</h2>
+        <ul>
+          <li><code>/memory</code> lists the CLAUDE.md files and the auto memory folder, opens any of them in your editor, and has a switch for auto memory. <span class="ev ev-vendor">Vendor docs</span></li>
+          <li>To turn auto memory off for one project, set <code>"autoMemoryEnabled": false</code> in that project's <code>.claude/settings.json</code>. To keep the notes somewhere else, set <code>autoMemoryDirectory</code>. <span class="ev ev-vendor">Vendor docs</span></li>
+          <li>The notes stay on the machine that wrote them. They aren't shared across machines or cloud sessions. <span class="ev ev-vendor">Vendor docs</span></li>
+          <li>Subagents don't get the main conversation's auto memory, except a fork of the conversation. <span class="ev ev-vendor">Vendor docs</span></li>
+        </ul>
+        <p>If you'd rather a preference went to the whole team, ask Claude to "add this to CLAUDE.md" instead. That file is in the repository, so it goes through review like any other change. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="limits">What memory can't do</h2>
+        <p>A note is context for the model. Nothing forces Claude to follow it, and nothing stops a tool call that goes against it. If a rule has to hold, put it in a hook, where Claude Code asks your script before the tool runs. The <a href="/learn/claude-code-hooks/">hooks tutorial</a> shows how.</p>
+        <p>Auto memory also loads only once, at the start of a session. If a note becomes relevant halfway through a long session, the model has to think of opening it. The <a href="/learn/spontaneous-memory/">Spontaneous Memory tutorial</a> builds a helper that searches your notes on every prompt instead.</p>
+        <p>Everything past the first 200 lines or 25&nbsp;KB of <code>MEMORY.md</code> is dropped at session start, and Claude Code tells Claude to shorten the index when it gets close. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="not-verified">What we haven't verified</h2>
+        <ul>
+          <li>The same steps in the Claude desktop app. It runs the same Claude Code build and reads the same folders, as the <a href="/learn/claude-code-hooks/">first tutorial</a> shows, but we ran these prompts only in a terminal.</li>
+          <li>What happens once <code>MEMORY.md</code> passes 200 lines.</li>
+          <li>Whether Claude saves notes you didn't ask for; our test only covered explicit requests. <span class="ev ev-unverified">Not verified</span></li>
+        </ul>
+      </section>
+
+      <nav class="series" aria-label="Series">
+        <a class="prev" href="/learn/spontaneous-memory/"><small>Previous</small>Spontaneous Memory</a>
+        <a class="next" href="/learn/claude-md/"><small>Next</small>How Claude Code loads CLAUDE.md</a>
+      </nav>
+      <p class="lastverified">Last verified 2026-09-25 · review by 2026-10-25</p>
+    </article>
+  </div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>
