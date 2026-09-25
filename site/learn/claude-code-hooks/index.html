@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code hooks, Codex hooks and OpenCode plugins, desktop apps included</title>
+<meta name="description" content="Claude Code hooks, Codex hooks and OpenCode plugins, including from the desktop apps: where they live, what they receive, and how to log, block and add context.">
+<link rel="canonical" href="https://crossingguard.dev/learn/claude-code-hooks/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<meta name="verified-on" content="2026-09-25">
+<meta name="review-by" content="2026-10-25">
+<meta name="tested-versions" content="Claude Code 2.1.280 (desktop app); Codex CLI 0.154.0-alpha.6.2 (desktop app); OpenCode 1.18.0 (terminal UI); macOS">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Claude Code hooks, Codex hooks and OpenCode plugins, in the terminal and the desktop apps", "description": "Claude Code hooks, Codex hooks and OpenCode plugins, including from the desktop apps: where they live, what they receive, and how to log, block and add context.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://crossingguard.dev/learn/claude-code-hooks/", "author": {"@type": "Organization", "name": "Crossing Guard"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="28" height="32" viewBox="0 0 30 34" aria-hidden="true">
+      <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+      <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+      <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/" aria-current="true">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/learn/">Learn</a> › Claude Code, Codex and OpenCode hooks</p>
+    <p class="eyebrow">Tutorial · 15 min read · Claude Code · Codex · OpenCode</p>
+    <h1>Claude Code hooks, Codex hooks and OpenCode plugins, in the terminal and the desktop apps</h1>
+    <p class="lede">The Claude and Codex desktop apps run the same agent runtime you would start in a terminal, and that runtime reads your user-level hook configuration. OpenCode's documentation says the same about its desktop app. So a short script can log every tool call a session makes, including sessions started from a desktop app, and can answer with a decision or a note for the model.</p>
+    <aside class="verified" aria-label="What this tutorial was verified on">
+      <p class="vh">Verified on</p>
+      <dl>
+        <dt>Claude</dt><dd>Claude desktop app running Claude Code 2.1.280 (macOS)</dd>
+        <dt>Codex</dt><dd>Codex desktop app with its bundled Codex CLI 0.154.0-alpha.6.2 (macOS)</dd>
+        <dt>OpenCode</dt><dd>OpenCode 1.18.0 terminal UI (macOS)</dd>
+        <dt>Vendor docs</dt><dd>Read 2026-09-25, linked at the end of the page</dd>
+      </dl>
+      <p class="legend">Each factual sentence carries a label saying how we know it:
+        <span class="ev ev-observed">Observed</span> we ran it on a real install ·
+        <span class="ev ev-vendor">Vendor docs</span> the vendor's current documentation says so ·
+        <span class="ev ev-unverified">Not verified</span> we have not confirmed it.</p>
+    </aside>
+  </div></div>
+
+  <div class="wrap article-layout">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#why-this-works">Why desktop sessions run your hooks</a></li>
+        <li><a href="#claude-code">Claude Code</a></li>
+        <li><a href="#codex">Codex</a></li>
+        <li><a href="#opencode">OpenCode</a></li>
+        <li><a href="#transcripts">Transcripts on disk</a></li>
+        <li><a href="#side-by-side">Side by side</a></li>
+        <li><a href="#running-safely">Running a hook safely</a></li>
+        <li><a href="#not-verified">What we haven't verified</a></li>
+      </ol>
+    </nav>
+
+    <article class="article">
+      <section>
+        <h2 id="why-this-works">Why desktop sessions run your hooks</h2>
+        <p>On our test Mac, the Claude desktop app starts a bundled <code>claude</code> executable with <code>--setting-sources=user,project,local</code>. That option loads your <code>~/.claude/settings.json</code>, and the hooks in it. <span class="ev ev-observed">Observed</span> Anthropic's documentation states that the desktop app and the CLI read the same configuration files, and that hooks fire in the terminal, the IDE extensions and the desktop app. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>The Codex desktop app starts a bundled <code>codex app-server</code> process. Once the hooks in <code>~/.codex/hooks.json</code> were trusted, they fired for sessions started from the desktop app. <span class="ev ev-observed">Observed</span> OpenCode's desktop app runs an OpenCode server alongside it and loads plugins from the same directories as the terminal UI. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>To see the runtime behind an open desktop app, list its processes:</p>
+        <figure class="code">
+          <figcaption id="code-1">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-1"><code>ps -axo command | grep -E 'claude|codex app-server|opencode' | grep -v grep</code></pre>
+        </figure>
+        <p>The arguments show which settings files the runtime loads, and therefore which hooks will run.</p>
+        <aside class="callout caution">
+          <p class="ct">Hooks run with your permissions</p>
+          <p>A command hook is an ordinary program, and it runs with your full user permissions; Anthropic's documentation says so, and Codex hooks and OpenCode plugins run the same way. Read a hook before you install it. <span class="ev ev-vendor">Vendor docs</span></p>
+        </aside>
+      </section>
+
+      <section>
+        <h2 id="claude-code">Claude Code: a hook in settings.json</h2>
+        <p>User-level hooks go under the <code>hooks</code> key of <code>~/.claude/settings.json</code> and apply to every project. A project can add its own in <code>.claude/settings.json</code>. <span class="ev ev-vendor">Vendor docs</span> This configuration sends every prompt and every tool call to one script:</p>
+        <figure class="code">
+          <figcaption id="code-2">~/.claude/settings.json</figcaption>
+          <pre tabindex="0" aria-labelledby="code-2"><code>{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "python3 /path/to/hooks/watch.py" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "*",
+        "hooks": [ { "type": "command", "command": "python3 /path/to/hooks/watch.py" } ] }
+    ]
+  }
+}</code></pre>
+        </figure>
+        <p>For each event the runtime starts your command, writes one JSON object to its standard input and reads its standard output. The script below appends each event to a log file, adds a note to each prompt, and refuses <code>Read</code> calls on files whose names end in <code>.env</code>:</p>
+        <figure class="code">
+          <figcaption id="code-3">/path/to/hooks/watch.py</figcaption>
+          <pre tabindex="0" aria-labelledby="code-3"><code>#!/usr/bin/env python3
+import json, sys, time, pathlib
+
+event = json.load(sys.stdin)
+with (pathlib.Path.home() / "hook-events.jsonl").open("a") as log:
+    log.write(json.dumps({"at": time.time(), **event}) + "\n")
+
+name = event.get("hook_event_name")
+if name == "UserPromptSubmit":
+    print(json.dumps({"hookSpecificOutput": {
+        "hookEventName": "UserPromptSubmit",
+        "additionalContext": "Note from a local watcher: run the tests before you finish."}}))
+elif name == "PreToolUse":
+    path = str(event.get("tool_input", {}).get("file_path", ""))
+    if path.endswith(".env"):
+        print(json.dumps({"hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": "The local watcher keeps .env files out of the conversation."}}))
+sys.exit(0)</code></pre>
+        </figure>
+        <p>The <code>.env</code> check is a demonstration and does not keep secrets out. It sees only the <code>file_path</code> argument of file tools, so <code>cat .env</code> in a shell command, a search tool, or a file named <code>.env.local</code> gets past it.</p>
+        <h3>What arrives on standard input</h3>
+        <p>Every event carries <code>session_id</code>, <code>transcript_path</code>, <code>cwd</code> and <code>hook_event_name</code>, and most events also carry <code>permission_mode</code>. Tool events add <code>tool_name</code>, <code>tool_input</code> and <code>tool_use_id</code>, and <code>PostToolUse</code> adds <code>tool_response</code>. <span class="ev ev-vendor">Vendor docs</span> When we ran the script, the log held those common fields for both events, plus <code>prompt</code> for <code>UserPromptSubmit</code> and the three tool fields for <code>PreToolUse</code>. <span class="ev ev-observed">Observed</span></p>
+        <h3>How a hook answers</h3>
+        <p>Printing nothing and exiting with status 0 lets the action go ahead. On <code>PreToolUse</code> a hook can print a <code>permissionDecision</code> of <code>allow</code>, <code>deny</code> or <code>ask</code>, with a reason, and a <code>deny</code> from any hook wins over the others. Exit status 2 also blocks the call and uses standard error as the reason. <span class="ev ev-vendor">Vendor docs</span> A fourth decision, <code>defer</code>, is honoured only in non-interactive <code>claude -p</code> runs; interactive sessions, including the desktop app, ignore it. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>To add information for the model, print <code>additionalContext</code>. It works on events including <code>UserPromptSubmit</code>, <code>PreToolUse</code> and <code>PostToolUse</code>, up to 10,000 characters per field. <span class="ev ev-vendor">Vendor docs</span> We have seen both denials and added context in transcripts of sessions started from the Claude desktop app. <span class="ev ev-observed">Observed</span></p>
+        <aside class="callout note">
+          <p class="ct">Timing</p>
+          <p>Matching hooks run in parallel. A command hook times out after 600 seconds by default, and after 30 seconds on <code>UserPromptSubmit</code>. If a <code>PreToolUse</code> hook times out, the tool call goes ahead. <span class="ev ev-vendor">Vendor docs</span> Decide what a slow or crashed hook should mean before you rely on it.</p>
+        </aside>
+        <p>In an interactive session, hooks from settings files wait until you accept the workspace trust dialog for that folder. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="codex">Codex: hooks.json, then trust</h2>
+        <p>Codex reads <code>~/.codex/hooks.json</code> (or a <code>[hooks]</code> table in <code>config.toml</code>), plus the same files in the <code>.codex/</code> folder of a project you have trusted. Hooks are on by default. <span class="ev ev-vendor">Vendor docs</span> The registration looks like this:</p>
+        <figure class="code">
+          <figcaption id="code-4">~/.codex/hooks.json</figcaption>
+          <pre tabindex="0" aria-labelledby="code-4"><code>{
+  "hooks": {
+    "PreToolUse": [
+      { "hooks": [ { "type": "command", "command": "python3 /path/to/hooks/watch.py" } ] }
+    ]
+  }
+}</code></pre>
+        </figure>
+        <p>The same script reads Codex's event format. When we gave it a <code>PreToolUse</code> event built from the Codex documentation, it logged the event and allowed the call. <span class="ev ev-observed">Observed</span> Its <code>.env</code> check looks for Claude's <code>file_path</code> argument, so for Codex you would match the shell command in <code>tool_input.command</code> instead.</p>
+        <h3>Trusting the hook</h3>
+        <p>Codex records trust against a hash of each hook and skips any hook that is new or has changed until you trust it. <span class="ev ev-vendor">Vendor docs</span> Open the Codex CLI in a terminal, type <code>/hooks</code>, and trust the entries you added; do it again after every edit. If <code>codex</code> is not on your <code>PATH</code>, the desktop app includes a copy, which on our test Mac was <code>/Applications/ChatGPT.app/Contents/Resources/codex</code>. <span class="ev ev-observed">Observed</span></p>
+        <p>Trust is granted per event. On our machine only <code>PreToolUse</code> was trusted, and only <code>PreToolUse</code> fired. Shell commands run from the desktop app reached the hook as <code>Bash</code> tool calls. <span class="ev ev-observed">Observed</span></p>
+        <h3>How a Codex hook answers</h3>
+        <p>A hook denies a call with <code>permissionDecision: "deny"</code> or with exit status 2. Codex parses <code>"ask"</code> but does not support it: the hook run is marked as failed and the tool call continues. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>The documentation describes <code>additionalContext</code> for <code>PreToolUse</code>. By default each message is limited to roughly 2,500 tokens, and a handler can change that with <code>additionalContextLimit</code>. Standard input carries <code>session_id</code>, <code>transcript_path</code> (which can be null), <code>cwd</code>, <code>hook_event_name</code> and <code>model</code>, and tool events add <code>tool_name</code>, <code>tool_input</code> and <code>tool_use_id</code>. <span class="ev ev-vendor">Vendor docs</span></p>
+      </section>
+
+      <section>
+        <h2 id="opencode">OpenCode: a plugin file</h2>
+        <p>OpenCode loads JavaScript plugins from <code>~/.config/opencode/plugins/</code> for every project and from <code>.opencode/plugins/</code> for one project. A plugin is an async function; it receives a context object that includes an SDK <code>client</code>, and it returns the hooks it implements. <span class="ev ev-vendor">Vendor docs</span></p>
+        <figure class="code">
+          <figcaption id="code-5">~/.config/opencode/plugins/watch.js</figcaption>
+          <pre tabindex="0" aria-labelledby="code-5"><code>import { appendFileSync } from "node:fs"
+import { homedir } from "node:os"
+import { join } from "node:path"
+
+const log = (entry) =&gt;
+  appendFileSync(join(homedir(), "opencode-events.jsonl"),
+    JSON.stringify({ at: Date.now(), ...entry }) + "\n")
+
+export const Watch = async () =&gt; ({
+  "tool.execute.before": async (input, output) =&gt; {
+    // A throw here blocks the tool call, so a logging error must never escape.
+    try { log({ tool: input.tool, session: input.sessionID, args: output.args }) } catch {}
+    if (String(output.args?.filePath ?? "").endsWith(".env")) {
+      throw new Error("The local watcher keeps .env files out of the conversation.")
+    }
+  },
+  event: async ({ event }) =&gt; {
+    try { if (event.type === "session.idle") log({ idle: event.properties.sessionID }) } catch {}
+  },
+})</code></pre>
+        </figure>
+        <p>Throwing inside <code>tool.execute.before</code> stops the tool call. OpenCode's documentation uses this pattern to protect <code>.env</code> files, <span class="ev ev-vendor">Vendor docs</span> and it blocked the call on our install. <span class="ev ev-observed">Observed</span> The same limits as the Claude script apply: only the <code>filePath</code> argument is checked.</p>
+        <p><code>session.idle</code> has no hook of its own and arrives through the <code>event</code> hook. <span class="ev ev-vendor">Vendor docs</span> The plugin above logged both kinds of entry. <span class="ev ev-observed">Observed</span></p>
+        <p>The plugin context's SDK <code>client</code> can also add a message to a session without asking the model to reply, using <code>client.session.prompt({ path: { id }, body: { noReply: true, parts: [{ type: "text", text }] } })</code>. <span class="ev ev-vendor">Vendor docs</span> We have not yet seen this reach a live session. <span class="ev ev-unverified">Not verified</span></p>
+        <p>Restart OpenCode after adding or changing a plugin.</p>
+      </section>
+
+      <section>
+        <h2 id="transcripts">Transcripts on disk</h2>
+        <p>A hook sees an action before it happens. The runtime's transcript records what was said, and each runtime writes one to disk while the session runs: <span class="ev ev-observed">Observed</span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Runtime</th><th>Where</th><th>Useful detail</th></tr></thead>
+          <tbody>
+            <tr><td>Claude Code</td><td><code>~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl</code></td><td>Context added by a hook appears as an attachment of type <code>hook_additional_context</code>.</td></tr>
+            <tr><td>Codex</td><td><code>~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl</code></td><td>The first <code>session_meta</code> record names the originator, which separates desktop sessions from terminal ones.</td></tr>
+            <tr><td>OpenCode</td><td><code>~/.local/share/opencode/opencode.db</code></td><td>A SQLite database rather than JSON lines.</td></tr>
+          </tbody>
+        </table></div>
+        <p>Claude Code and Codex hook events include the transcript path, although Codex may send it as null; OpenCode plugin events do not include it. <span class="ev ev-vendor">Vendor docs</span> These file formats are internal to each vendor and change between versions, so tie any parser to the version you tested.</p>
+      </section>
+
+      <section>
+        <h2 id="side-by-side">Side by side</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Task</th><th>Claude Code</th><th>Codex</th><th>OpenCode</th></tr></thead>
+          <tbody>
+            <tr><td>Register</td><td><code>hooks</code> in settings.json</td><td><code>hooks.json</code> or <code>[hooks]</code></td><td>plugin file</td></tr>
+            <tr><td>Extra step</td><td>accept workspace trust</td><td>trust each hook with <code>/hooks</code></td><td>restart</td></tr>
+            <tr><td>Block a tool</td><td><code>deny</code> or exit 2</td><td><code>deny</code> or exit 2 (no <code>ask</code>)</td><td>throw</td></tr>
+            <tr><td>Add context for the model</td><td><code>additionalContext</code>, 10,000 characters</td><td><code>additionalContext</code>, about 2,500 tokens by default</td><td>SDK <code>session.prompt</code> with <code>noReply</code></td></tr>
+            <tr><td>Desktop sessions on our Mac</td><td><span class="ev ev-observed">Observed</span></td><td><span class="ev ev-observed">Observed</span> after trust</td><td><span class="ev ev-unverified">Not verified</span></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section>
+        <h2 id="running-safely">Running a hook safely</h2>
+        <p>A hook sees file contents and shell commands in <code>tool_input</code>, including anything the model pasted into them, so keep its logs as private as the files themselves.</p>
+        <p>A <code>PreToolUse</code> hook with the matcher <code>*</code> runs before every tool call in every session, including desktop sessions you have forgotten about. Keep it fast.</p>
+        <p>Choose what should happen when the hook crashes or times out. A logger should let the tool run anyway. A check you depend on should block the call and give a reason.</p>
+        <p>To remove a hook, delete its entry from the settings file, <code>hooks.json</code> or the plugins folder. Codex also keeps a trust record for each hook in <code>config.toml</code> under <code>[hooks.state]</code>. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="not-verified">What we haven't verified</h2>
+        <p>On 2026-09-25 we ran the Claude Code and OpenCode examples on this page as published, each with its own isolated configuration. The log files filled, the <code>.env</code> reads were refused, and Claude repeated the watcher's note. We did not run the Codex configuration end to end: we checked that it parses and gave the script a Codex-shaped event, which it logged and allowed.</p>
+        <ul>
+          <li>The OpenCode desktop app. We tested the terminal UI; what this page says about the desktop app comes from OpenCode's documentation.</li>
+          <li>An OpenCode <code>noReply</code> message reaching a live session.</li>
+          <li>Codex events other than <code>PreToolUse</code> firing from the desktop app, and Codex <code>additionalContext</code> reaching the model. Those hooks were not trusted on our machine.</li>
+          <li>Whether the Claude desktop app shows its own workspace trust prompt before hooks from settings files run.</li>
+        </ul>
+        <p>Newer versions than the ones we tested were available on the day we checked: Claude Code 2.1.282, Codex CLI 0.157.0 and OpenCode 1.18.32. Hook contracts change, so check the vendor documentation before relying on a detail.</p>
+        <p>Vendor documentation: <a href="https://code.claude.com/docs/en/hooks">Claude Code hooks</a> · <a href="https://code.claude.com/docs/en/desktop">Claude desktop</a> · <a href="https://learn.chatgpt.com/docs/hooks">Codex hooks</a> · <a href="https://opencode.ai/docs/plugins/">OpenCode plugins</a> · <a href="https://opencode.ai/docs/sdk/">OpenCode SDK</a> · <a href="https://opencode.ai/docs/troubleshooting/">OpenCode troubleshooting (desktop app)</a></p>
+      </section>
+
+      <nav class="series" aria-label="Series">
+        <a class="prev" href="/learn/"><small>Back to</small>All tutorials</a>
+        <a class="next" href="/agents/"><small>See also</small>Agents that work alongside your session</a>
+      </nav>
+      <p class="lastverified">Last verified 2026-09-25 · review by 2026-10-25</p>
+    </article>
+  </div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Claude Code, Codex and OpenCode hooks</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>

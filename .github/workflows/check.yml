@@ -1,0 +1,35 @@
+name: check
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * 1' # weekly: a red run means a page is past its review-by date.
+                         # GitHub disables schedules in repositories with 60 days of no activity.
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  site:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+      - name: Check self-test (every rule fails on a planted defect)
+        run: node scripts/check-site.test.mjs
+      - name: Check (pull request; expiry is fatal only where this change adds claim content)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-site.mjs --freshness=changed --base "origin/$BASE_REF"
+      - name: Check (main; expiry is reported, not fatal)
+        if: github.event_name == 'push'
+        run: node scripts/check-site.mjs --freshness=warn
+      - name: Check (scheduled; every review-by date enforced)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: node scripts/check-site.mjs --freshness=error

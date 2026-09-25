@@ -1,0 +1,307 @@
+{
+  "origin": "https://crossingguard.dev",
+  "site_dir": "site",
+  "template": "templates/tutorial.html",
+  "stylesheet": "/assets/site.css",
+  "favicon": "/assets/favicon.svg",
+  "nav": [
+    "/",
+    "/agents/",
+    "/compare/",
+    "/limits/",
+    "/learn/"
+  ],
+  "noindex": [
+    "/404.html",
+    "/styleguide/"
+  ],
+  "no_current_nav": [
+    "/404.html",
+    "/styleguide/"
+  ],
+  "unlinked_pages": [
+    "/styleguide/"
+  ],
+  "evidence_classes": [
+    "ev-observed",
+    "ev-source",
+    "ev-vendor",
+    "ev-unverified"
+  ],
+  "claim_badge_classes": [
+    "ev-observed",
+    "ev-source"
+  ],
+  "claim_evidence_badges": {
+    "installed observation": [
+      "ev-observed",
+      "ev-source"
+    ],
+    "source-verified behavior": [
+      "ev-source"
+    ],
+    "vendor statement": [
+      "ev-vendor"
+    ]
+  },
+  "claim_strengths": [
+    "enforced",
+    "best-effort",
+    "advisory",
+    "observed",
+    "planned"
+  ],
+  "review_by_max_days": 45,
+  "description_length": [
+    50,
+    170
+  ],
+  "headers_rule": "/*",
+  "required_headers": {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Frame-Options": "DENY",
+    "Content-Security-Policy": "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  },
+  "banned_absolutes": [
+    "tamper[- ]?proof",
+    "prevents? all leaks",
+    "complete visibility",
+    "never sends",
+    "\\bsecure\\b",
+    "\\bguaranteed?\\b",
+    "never leaves?"
+  ],
+  "public_safety": [
+    {
+      "pattern": "/(Users|home)/(?!you/)[^/\\s\"'<>]+/",
+      "why": "home path other than the /Users/you/ placeholder"
+    },
+    {
+      "pattern": "-Users-(?!you-)[A-Za-z0-9]+-",
+      "why": "encoded home path (a transcript project folder)"
+    },
+    {
+      "pattern": "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}",
+      "flags": "i",
+      "why": "email address"
+    },
+    {
+      "pattern": "(127\\.0\\.0\\.1|localhost|0\\.0\\.0\\.0):\\d{2,5}",
+      "why": "concrete loopback port"
+    },
+    {
+      "pattern": "\\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\b",
+      "flags": "i",
+      "why": "UUID (session or record id)"
+    },
+    {
+      "pattern": "\\bses_[A-Za-z0-9]{12,}",
+      "why": "OpenCode session id"
+    },
+    {
+      "pattern": "\\b[0-9a-f]{32,}\\b",
+      "flags": "i",
+      "why": "long hex run (token, hash or id)",
+      "allow_line": "^\\s*-?\\s*uses:\\s+[\\w./-]+@[0-9a-f]{40}\\b"
+    },
+    {
+      "pattern": "\\bsk-[A-Za-z0-9]{8,}",
+      "why": "API key shape"
+    },
+    {
+      "pattern": "(?<![\\w-])cg(?![\\w:])",
+      "flags": "i",
+      "why": "short product name — spell it crossing-guard"
+    }
+  ],
+  "public_safety_skip": [
+    "scripts/check-site.config.json",
+    "scripts/check-site.test.mjs"
+  ],
+  "forbidden_files": [
+    ".DS_Store",
+    "Thumbs.db"
+  ],
+  "contrast_pairs": [
+    [
+      "--ink",
+      "--paper",
+      4.5
+    ],
+    [
+      "--ink-2",
+      "--paper",
+      4.5
+    ],
+    [
+      "--ink-3",
+      "--paper",
+      4.5
+    ],
+    [
+      "--ink-3",
+      "--sky",
+      4.5
+    ],
+    [
+      "--ink-2",
+      "--sky-head",
+      4.5
+    ],
+    [
+      "--link",
+      "--paper",
+      4.5
+    ],
+    [
+      "--visited",
+      "--paper",
+      4.5
+    ],
+    [
+      "--link",
+      "--sky",
+      4.5
+    ],
+    [
+      "--fyg-ink",
+      "--fyg",
+      4.5
+    ],
+    [
+      "#FFFFFF",
+      "--grass-ink",
+      4.5
+    ],
+    [
+      "#FFFFFF",
+      "--ask-ink",
+      4.5
+    ],
+    [
+      "#FFFFFF",
+      "--stop",
+      4.5
+    ],
+    [
+      "--grass-ink",
+      "--grass-light",
+      4.5
+    ],
+    [
+      "--link-ink",
+      "--sky",
+      4.5
+    ],
+    [
+      "--ask-ink",
+      "--ask-light",
+      4.5
+    ],
+    [
+      "--term-ink",
+      "--term-bg",
+      4.5
+    ],
+    [
+      "--term-dim",
+      "--term-2",
+      4.5
+    ],
+    [
+      "--term-dim",
+      "--term-bg",
+      4.5
+    ],
+    [
+      "#FFFFFF",
+      "--ink",
+      4.5
+    ],
+    [
+      "#E4E5E8",
+      "--ink",
+      4.5
+    ],
+    [
+      "#9A9CA2",
+      "--ink",
+      4.5
+    ],
+    [
+      "--focus",
+      "--paper",
+      3
+    ],
+    [
+      "--focus",
+      "--sky",
+      3
+    ],
+    [
+      "--focus",
+      "--fyg",
+      3
+    ],
+    [
+      "--focus-on-dark",
+      "--ink",
+      3
+    ],
+    [
+      "--focus-on-dark",
+      "--term-bg",
+      3
+    ]
+  ],
+  "voice_scope": [
+    "site/learn/",
+    "site/styleguide/",
+    "templates/"
+  ],
+  "voice_docs": [
+    "TUTORIALS.md"
+  ],
+  "voice_rules": [
+    {
+      "pattern": "—|(?<!\\d)–|–(?!\\d)|\\s--\\s",
+      "why": "dash in prose (use a period, comma, colon or parentheses; an en dash is allowed between digits)"
+    },
+    {
+      "pattern": "\\bnot (just|only|merely)\\b[^.!?]{0,80}\\bbut\\b",
+      "flags": "gi",
+      "why": "not-X-but-Y contrast"
+    },
+    {
+      "pattern": "\\b(isn't|is not|aren't|are not)\\b[^.;!?]{1,60}[.;]\\s+(it's|it is|they're|they are)\\b",
+      "flags": "gi",
+      "why": "isn't-X. It's-Y contrast"
+    },
+    {
+      "pattern": "\\b(this|it) (is not|isn't) (about|just|merely)\\b",
+      "flags": "gi",
+      "why": "arguing with no one"
+    },
+    {
+      "pattern": "(?:^\\s*|[.!?:]\\s+)(here's the thing|the thing is|let's (dive|explore|break)|without further ado|here's what you need to know|real talk|let's be honest)\\b",
+      "flags": "gim",
+      "why": "staged run-up"
+    },
+    {
+      "pattern": "\\b(delve[sd]?|tapestry|testament|pivotal|showcas(e|es|ed|ing)|meticulous(ly)?|intricate|fostering|garner(s|ed)?|vibrant|interplay|bolstered|enduring|additionally|crucial|seamless(ly)?)\\b",
+      "flags": "gi",
+      "why": "stock AI word"
+    },
+    {
+      "pattern": "\\b(I hope this helps|great question|let me know if|feel free to)\\b",
+      "flags": "gi",
+      "why": "chatbot residue"
+    },
+    {
+      "pattern": "\\b(the real (question|win)|at its core|what really matters)\\b",
+      "flags": "gi",
+      "why": "saying that sounds deep"
+    }
+  ]
+}

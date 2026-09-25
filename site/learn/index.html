@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn: Claude Code, Codex and OpenCode internals — Crossing Guard</title>
+<meta name="description" content="Tutorials on how Claude Code, Codex and OpenCode work underneath: hooks from the terminal and the desktop apps, and what you can build on them.">
+<link rel="canonical" href="https://crossingguard.dev/learn/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="28" height="32" viewBox="0 0 30 34" aria-hidden="true">
+      <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+      <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+      <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/" aria-current="page">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec">
+    <p class="crumb"><a href="/">Home</a> › Learn</p>
+    <p class="eyebrow">Learn</p>
+    <h1>How Claude Code, Codex and OpenCode work underneath, and how to hook into them</h1>
+    <p class="sub" style="max-width:64ch">Hooks, sessions, memory and helper agents in the three runtimes. Each tutorial lists the versions it was checked on, the date it was checked, and how we know each claim.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap sec" id="tutorials">
+    <h2>Tutorials</h2>
+    <p>You can read them in order or start with the one you need. The first one needs nothing of ours installed.</p>
+    <ol class="shelf">
+      <li class="card">
+        <p class="num">01 · Tutorial</p>
+        <h3><a href="/learn/claude-code-hooks/">Claude Code hooks, Codex hooks and OpenCode plugins, desktop apps included</a></h3>
+        <p>The Claude and Codex desktop apps run the same runtime as the terminal, and it reads your hook configuration. Log tool calls, block them, and add notes for the model with a short script.</p>
+        <p class="meta">Claude Code · Codex · OpenCode · verified 2026-09-25</p>
+      </li>
+    </ol>
+  </div></div>
+
+  <div class="band alt"><div class="wrap sec" id="reference">
+    <h2>Reference</h2>
+    <p>Reference pages compare the configuration layer across runtimes. Planned pages are listed here but are not linked until they exist.</p>
+    <div class="tablewrap"><table>
+      <caption>The shelf</caption>
+      <thead><tr><th>Page</th><th>Covers</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></td><td>Where hooks live, what they receive and how they answer, in Claude Code, Codex and OpenCode</td><td><span class="v v-enf">Published</span></td></tr>
+        <tr><td>Claude Code memory, actually explained</td><td>What loads into a session, when, and from where</td><td><span class="v v-adv">Planned</span></td></tr>
+        <tr><td>CLAUDE.md: what loads, when, and how big</td><td>Project instruction files and their limits</td><td><span class="v v-adv">Planned</span></td></tr>
+        <tr><td>MCP config across runtimes</td><td>Declaring tool servers in each runtime</td><td><span class="v v-adv">Planned</span></td></tr>
+        <tr><td>Skills across vendors</td><td>Packaged instructions, and how each runtime finds them</td><td><span class="v v-adv">Planned</span></td></tr>
+      </tbody>
+    </table></div>
+  </div></div>
+
+  <div class="band"><div class="wrap sec">
+    <h2>How we write these</h2>
+    <p class="prose">Each factual sentence in a tutorial has a label: <span class="ev ev-observed">Observed</span> on a real install, <span class="ev ev-source">In source (not yet public)</span>, from <span class="ev ev-vendor">Vendor docs</span>, or <span class="ev ev-unverified">Not verified</span>. Each page names the versions it was checked on and a date by which it will be checked again. When a vendor changes a hook, we update the page and its dates.</p>
+  </div></div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Claude Code, Codex and OpenCode hooks</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>

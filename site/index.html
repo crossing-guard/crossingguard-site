@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crossing Guard — a control layer for Claude Code, Codex and OpenCode</title>
+<meta name="description" content="One memory, one rulebook and an honest boundary across Claude Code, Codex and OpenCode. A local-first control layer being prepared for open-source release.">
+<link rel="canonical" href="https://crossingguard.dev/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/legacy-hash.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="28" height="32" viewBox="0 0 30 34" aria-hidden="true">
+      <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+      <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+      <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/" aria-current="page">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+
+  <div class="band hero">
+    <div class="wrap">
+      <div>
+        <svg class="paddle" width="40" height="46" viewBox="0 0 30 34" aria-hidden="true">
+          <rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/>
+          <polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/>
+          <text x="15" y="12.2" text-anchor="middle" font-family="Helvetica,Arial" font-size="5.2" font-weight="bold" fill="#fff">STOP</text>
+        </svg>
+        <h1>Your LLMs need a<br>crossing guard.</h1>
+        <p class="sub">One memory, one rulebook, one honest boundary — across every coding agent
+          you use. Local-first, being prepared for open-source release. Hook overhead depends on your configuration.</p>
+        <div class="heroctas">
+          <a class="btn" href="/#release-status">Release status</a>
+          <a class="btn-ghost" href="/compare/">See the evidence →</a>
+        </div>
+      </div>
+      <div class="term" role="img" aria-label="Terminal: a rule blocks a push to main across agents">
+        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">claude code — protect-shared-branch</span></div>
+        <div class="body"><span class="l c-dim">› agent wants to run:</span><span class="l"><span class="c-w">git push origin main --force</span></span><span class="l">&nbsp;</span><span class="l c-red">✋ BLOCKED — crossing rule: protect-shared-branch</span><span class="l c-dim">   reason: never force-push a shared branch</span><span class="l c-dim">   coverage: <span class="c-grn">enforced (fail-closed)</span> · claude-code</span><span class="l">&nbsp;</span><span class="l c-dim">› agent:</span><span class="l">"Understood — I'll open a PR instead."</span></div>
+      </div>
+    </div>
+  </div>
+
+<div class="band alt"><div class="wrap sec" style="padding:22px 20px" id="release-status"><h2>Public release in preparation.</h2><p>No public install or download is available from this page. This is a website design preview, not a product release. Examples, support labels and metrics illustrate the intended design.</p></div></div>
+  <div class="band"><div class="wrap sec">
+    <p class="eyebrow">Works with the agents you already use — and says exactly how well</p>
+    <div class="agents">
+      <div class="agent"><span class="mk" style="background:#A94F31">CC</span> Claude Code <span class="v v-enf">Proven</span></div>
+      <div class="agent"><span class="mk" style="background:#1F2124">CX</span> Codex <span class="v v-enf">Proven</span></div>
+      <div class="agent"><span class="mk" style="background:#2F6E2B">OC</span> OpenCode <span class="v v-enf">Proven</span></div>
+      <div class="agent"><span class="mk" style="background:#5A6570">CP</span> Copilot CLI <span class="v v-adv">Registered</span></div>
+      <div class="agent"><span class="mk" style="background:#2E6BB0">GM</span> Gemini CLI <span class="v v-adv">Registered</span></div>
+    </div>
+    <p class="prose" style="font-size:14.5px">Same binary, same rule file, demonstrated live on three agents across three model
+      families. The two "registered" agents have their hook seams mapped; coverage is probed before we ever
+      call it proven. <b>We never claim a wall we didn't build</b> — that honesty is the product.</p>
+  </div></div>
+
+
+  <div class="band alt"><div class="wrap sec">
+    <p class="eyebrow">What it does</p>
+
+    <div class="pillar">
+      <div class="txt"><p class="num">01</p><h2>One memory</h2>
+        <p class="prose">Your project knowledge follows you between agents — files-first, no vendor store.
+          Hit a limit on one, pick up on another with the context intact.</p></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing memory — carry</span></div>
+        <div class="body"><span class="l prompt c-w">crossing carry --from claude --to codex</span><span class="l c-dim">  reading 3 dossiers, 1 open session…</span><span class="l c-grn">  ✓ memory injected into codex session</span><span class="l c-grn">  ✓ 41 min of context preserved</span><span class="l c-dim">  nothing left the machine.</span></div>
+      </div>
+    </div>
+
+    <div class="pillar flip">
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing coverage — the honest report</span></div>
+        <div class="body"><span class="l prompt c-w">crossing coverage protect-shared-branch</span><span class="l c-dim">  rule → per-agent enforcement:</span><span class="l">  claude-code   <span class="c-grn">enforced (fail-closed)</span></span><span class="l">  codex         <span class="c-grn">enforced (fail-closed)</span></span><span class="l">  opencode      <span class="c-yel">best-effort (fails open on timeout)</span></span><span class="l">  copilot-cli   <span class="c-dim">unsupported — seam not yet probed</span></span></div>
+      </div>
+      <div class="txt"><p class="num">02</p><h2>One rulebook</h2>
+        <p class="prose">Write "never push to main" once. It compiles to each agent's own hook seam —
+          and the coverage report tells you, per rule, per agent, what's truly enforced versus best-effort.
+          Nobody else labels the seams honestly.</p></div>
+    </div>
+
+    <div class="pillar">
+      <div class="txt"><p class="num">03</p><h2>Every agent, one file</h2>
+        <p class="prose">The same rules.json drove a live block on Claude Code, Codex, and OpenCode — three
+          integration styles, one source of truth. Add a runtime by adding a data row, not a rewrite.</p></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">rules.json — authored once</span></div>
+        <div class="body"><span class="l c-cy">{</span><span class="l">  <span class="c-yel">"id"</span>: <span class="c-grn">"protect-shared-branch"</span>,</span><span class="l">  <span class="c-yel">"match"</span>: { <span class="c-yel">"capability"</span>: <span class="c-grn">"git.push_protected"</span> },</span><span class="l">  <span class="c-yel">"action"</span>: <span class="c-grn">"ask"</span>,</span><span class="l">  <span class="c-yel">"backstop"</span>: <span class="c-grn">"remote-branch-protection"</span></span><span class="l c-cy">}</span></div>
+      </div>
+    </div>
+  </div></div>
+
+
+  <div class="band"><div class="wrap sec">
+    <p class="eyebrow">How it works</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Install &amp; attach</h3><p style="font-size:14px;margin:2px 0">One command, then <span style="font-family:var(--mono)">crossing attach</span> wires the hooks into each agent you use.</p></div>
+      <div class="step"><div class="n">2</div><h3>Write one rule</h3><p style="font-size:14px;margin:2px 0">Pick from the library or write a capability + action. It compiles to every agent's seam automatically.</p></div>
+      <div class="step"><div class="n">3</div><h3>See the coverage</h3><p style="font-size:14px;margin:2px 0">The report shows what's enforced, best-effort, or unsupported — per agent. No surprises, no bluffing.</p></div>
+    </div>
+  </div></div>
+
+
+  <div class="band grassband"><div class="wrap sec">
+    <div class="proof">
+      <div class="proofstat"><b>3</b> agents, proven live<br><span class="fine">Claude Code · Codex · OpenCode</span></div>
+      <div class="proofstat"><b>1</b> rule file<br><span class="fine">3 model families, 3 integration styles</span></div>
+      <div class="proofstat"><b>0</b> bytes to a vendor<br><span class="fine">local-first, non-logging fallback</span></div>
+      <div><a class="btn-ghost" href="/compare/">Read the probes →</a></div>
+    </div>
+    <p class="fine">No user-count to quote yet — so here's proof of work instead of proof of a crowd. Every claim above links to a probe you can run.</p>
+  </div></div>
+
+
+  <div class="band"><div class="wrap sec">
+    <div class="pillar">
+      <div class="txt">
+        <p class="eyebrow">Never get stuck</p>
+        <h2>Your usage limit resets in five hours.<br>Your deadline doesn't.</h2>
+        <p class="prose">When one agent hits the wall mid-task, the paddle goes up — and your session,
+          memory, and rules cross to another agent or a local model. Keep working.</p>
+        <p style="margin-top:14px"><a class="btn-ghost" href="/limits/">See the limits board →</a></p>
+      </div>
+      <div class="panel walled" style="margin:0"><div class="ph">When the meter runs out</div><div class="pb">
+        <p style="display:flex;align-items:center;gap:9px;margin:2px 0">
+          <svg width="22" height="26" viewBox="0 0 30 34" aria-hidden="true"><rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/><polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/></svg>
+          <span class="v v-stop">At limit</span> <span class="fine">Claude Max · resets 4h 51m</span></p>
+        <div class="meter"><i style="width:100%"></i></div>
+        <p style="font-size:14px;margin-top:8px"><b>Cross to Codex →</b> session + memory + rules travel with you.</p>
+      </div></div>
+    </div>
+  </div></div>
+
+
+  <div class="band alt"><div class="wrap sec">
+    <p class="eyebrow">For the team lead who has to answer for it</p>
+    <h2>Honest governance, not a checkbox</h2>
+    <div class="steps" style="margin-top:8px">
+      <div class="step"><h3>Author once, enforce everywhere</h3><p style="font-size:14px">Org policy is a signed, versioned bundle — org &gt; repo &gt; user, tighten-only. Compiles locally; the server just distributes it.</p></div>
+      <div class="step"><h3>Coverage you can audit</h3><p style="font-size:14px">Every rule renders its real enforcement per agent. A security review reads the report, not the marketing.</p></div>
+      <div class="step"><h3>Run it yourself</h3><p style="font-size:14px">Self-host the whole thing, with any future managed service subject to a separate announcement. License and contribution terms are being finalized.</p></div>
+    </div>
+    <p class="prose" style="font-style:italic;margin-top:14px">We didn't put Open in the name. We put it in the license.</p>
+  </div></div>
+
+
+  <div class="band"><div class="wrap sec">
+    <p class="eyebrow">The Comparison Lab</p>
+    <h2>Choosing between agents? We ran the same task on each.</h2>
+    <p class="sub" style="max-width:60ch">Reproducible head-to-heads — same repo, same rules, same session-carry test — with probe artifacts attached. Updated when the probes re-run.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Matchup</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><a href="/compare/">Codex vs Claude Code</a></td><td><span class="v v-enf">Probe-backed</span></td></tr>
+        <tr><td><a href="/compare/">OpenCode vs Claude Code</a></td><td><span class="v v-enf">Probe-backed</span></td></tr>
+        <tr><td><a href="/compare/">Gemini CLI vs Claude Code</a></td><td><span class="v v-adv">Registered</span></td></tr>
+      </tbody>
+    </table></div>
+    <p><a class="btn-ghost" href="/compare/">See all comparisons →</a></p>
+  </div></div>
+
+
+  <div class="band grassband"><div class="finalcta">
+    <h2>Put a guard at the crossing.</h2>
+    <p class="sub" style="margin:0 auto">Open-source release in preparation. Explore the design and proposed workflows.</p>
+    <div class="heroctas">
+      <a class="btn" href="/#release-status">Release status</a>
+      <a class="btn-ghost" href="/learn/">Learn how it works →</a>
+    </div>
+  </div></div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Claude Code, Codex and OpenCode hooks</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>
