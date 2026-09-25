@@ -1,0 +1,280 @@
+{
+ "page": "/learn/spontaneous-memory/",
+ "claims": [
+  {
+   "id": "sm-diy-run",
+   "wording": "In a three-prompt terminal session, the script's note arrived with the second prompt, the agent raised the conflict, and the transcript shows a UserPromptSubmit hook_additional_context entry.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Claude Code 2.1.280 (terminal); Python 3.14; macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed in the maintainers' own test run of the script on this page; the run's transcript contains private paths and is not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "sm-diy-mcp",
+   "wording": "With --tools alone the helper kept the claude.ai connector MCP tools; adding --disallowedTools mcp__* removed them.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Claude Code 2.1.280 (terminal); Python 3.14; macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed in the maintainers' own test run of the script on this page; the run's transcript contains private paths and is not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "sm-diy-bare",
+   "wording": "--bare did not use the claude.ai login, and the helper stopped with Not logged in.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Claude Code 2.1.280 (terminal); Python 3.14; macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed in the maintainers' own test run of the script on this page; the run's transcript contains private paths and is not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-behaviour",
+   "wording": "At each prompt the helper reads what changed, searches memory when the discussion calls for it, and decides whether to speak.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-mostly-silent",
+   "wording": "Most helper turns on our install end without a message.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-profile",
+   "wording": "The installed profile header and instructions are as shown.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-unenforced-fields",
+   "wording": "locality, timeout, max-tokens and the failure policy are declared but not applied to helper runs.",
+   "evidence_class": "source-verified behavior",
+   "strength": "advisory",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-field-enforcement",
+   "wording": "The field table describes which profile fields are applied to helpers.",
+   "evidence_class": "source-verified behavior",
+   "strength": "enforced",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-catalog",
+   "wording": "Profiles react only to signals in the published catalog, listed in the console with source and served status.",
+   "evidence_class": "source-verified behavior",
+   "strength": "enforced",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-path",
+   "wording": "The eight-step path from prompt to delivered note, and the right-hand column of the comparison table.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-traced",
+   "wording": "Complete runs have been traced from prompt to transcript on our install.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-timing",
+   "wording": "A note does not ride the prompt that started the helper; on our install it more often rides the next prompt than a later tool call.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-latency",
+   "wording": "A helper turn that ends in a note usually takes under a minute; quiet turns are quicker.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-expiry",
+   "wording": "Undelivered notes are kept for 30 minutes and then dropped, and this has happened on our install.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-config-change",
+   "wording": "On 13 September 2026 the trigger and delivery points were changed by configuration alone.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-13; profile recall-message-demo 1.3.0 to 1.4.0",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-history",
+   "wording": "Profiles are stored by content hash with their last 50 selections.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-guardrails",
+   "wording": "Each guardrail is enforced by the mechanism named in its row.",
+   "evidence_class": "source-verified behavior",
+   "strength": "best-effort",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-claude-support",
+   "wording": "Claude Code sessions publish turn starts and receive notes.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-codex-support",
+   "wording": "Codex hooks are all registered but only the pre-tool hook has fired; delivery to Codex is implemented but unobserved.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; Codex CLI 0.146 to 0.154 (desktop app); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-opencode-support",
+   "wording": "OpenCode sessions do not publish turn starts; delivery to OpenCode is implemented but unobserved.",
+   "evidence_class": "source-verified behavior",
+   "strength": "planned",
+   "versions": "Crossing Guard pre-release source (2026-09-25); OpenCode 1.18.0",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-helper-runtimes",
+   "wording": "The helper can run on Claude Code, Codex or OpenCode; ours runs on Codex.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-locality",
+   "wording": "The helper on our install uses a hosted model, so excerpts and memory records leave the machine despite local-only.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-subagent",
+   "wording": "A small share of notes landed in a Claude subagent's conversation instead of the main one.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; profile recall-message-demo 1.4.0; Claude Code 2.1.280 (source sessions); Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-memory-writes",
+   "wording": "Nothing in Crossing Guard yet prevents the helper from writing memories; only its instructions and the runtime sandbox stand in the way.",
+   "evidence_class": "source-verified behavior",
+   "strength": "advisory",
+   "versions": "Crossing Guard pre-release source (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the pre-release source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t3-helper-shell",
+   "wording": "The Codex helper's read-only mode sent no sandbox flag, so its turns could write in the project folder; the fix is merged, not installed.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard pre-release build installed 2026-09-25; Codex CLI 0.154.0-alpha.6.2 (helper); macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own pre-release install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  }
+ ]
+}
