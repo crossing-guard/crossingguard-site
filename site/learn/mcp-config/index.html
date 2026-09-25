@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP configuration in Claude Code, Codex and OpenCode</title>
+<meta name="description" content="One MCP server in Claude Code, Codex and OpenCode: the config file for each, a real tool call from each, and what each shows when the server is broken.">
+<link rel="canonical" href="https://crossingguard.dev/learn/mcp-config/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<meta name="verified-on" content="2026-09-25">
+<meta name="review-by" content="2026-10-25">
+<meta name="tested-versions" content="Claude Code 2.1.280 (terminal, Haiku 4.5); Codex CLI 0.154.0-alpha.6.2 (gpt-6-astra); OpenCode 1.18.0 (gpt-oss:20b); macOS">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "One MCP server in Claude Code, Codex and OpenCode, and how each one tells you it's broken", "description": "One MCP server in Claude Code, Codex and OpenCode: the config file for each, a real tool call from each, and what each shows when the server is broken.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://crossingguard.dev/learn/mcp-config/", "author": {"@type": "Organization", "name": "Crossing Guard"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M21.07 5.12 A12 12 0 1 0 26.88 10.93" fill="none" stroke="#26262E" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="24.49" cy="7.51" r="2.8" fill="#5F6B0A"/>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/" aria-current="true">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/learn/">Learn</a> › MCP configuration</p>
+    <p class="eyebrow">Tutorial · 10 min read · Claude Code · Codex · OpenCode</p>
+    <h1>One MCP server in Claude Code, Codex and OpenCode, and how each one tells you it's broken</h1>
+    <p class="lede">We connected the same public MCP server to all three runtimes, made one real tool call from each, then pointed each at a bad URL. The config files differ in small ways. How each runtime reports a broken server differs a lot, and that part is worth knowing before you rely on one.</p>
+    <aside class="verified" aria-label="What this tutorial was verified on">
+      <p class="vh">Verified on</p>
+      <dl>
+        <dt>Claude Code</dt><dd>2.1.280 in a terminal, with Haiku 4.5 (macOS)</dd>
+        <dt>Codex</dt><dd>Codex CLI 0.154.0-alpha.6.2, the copy bundled with the desktop app, with gpt-6-astra (macOS)</dd>
+        <dt>OpenCode</dt><dd>OpenCode 1.18.0, with gpt-oss:20b through Ollama Cloud (macOS)</dd>
+        <dt>Server</dt><dd>OpenAI's public docs server, <code>https://developers.openai.com/mcp</code>, which needs no key</dd>
+      </dl>
+      <p class="legend">Each factual sentence carries a label saying how we know it:
+        <span class="ev ev-observed">Observed</span> we ran it on a real install ·
+        <span class="ev ev-vendor">Vendor docs</span> the vendor's current documentation says so ·
+        <span class="ev ev-unverified">Not verified</span> we have not confirmed it.</p>
+    </aside>
+  </div></div>
+
+  <div class="wrap article-layout">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#server">The server</a></li>
+        <li><a href="#claude-code">Claude Code</a></li>
+        <li><a href="#codex">Codex</a></li>
+        <li><a href="#opencode">OpenCode</a></li>
+        <li><a href="#broken">When the server is broken</a></li>
+        <li><a href="#side-by-side">Side by side</a></li>
+        <li><a href="#not-verified">What we haven't verified</a></li>
+      </ol>
+    </nav>
+
+    <article class="article">
+      <section>
+        <h2 id="server">The server</h2>
+        <p>OpenAI runs a read-only MCP server for its documentation over streamable HTTP, with no key. <span class="ev ev-vendor">Vendor docs</span> It offered five tools when we connected: <code>search_openai_docs</code>, <code>list_openai_docs</code>, <code>fetch_openai_doc</code>, <code>list_api_endpoints</code> and <code>get_openapi_spec</code>. <span class="ev ev-observed">Observed</span> We named the connection <code>openaiDocs</code> in every runtime, and asked each one to search for "Docs MCP" and give back the title of the first hit. All three answered "MCP servers | OpenAI API". <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="claude-code">Claude Code: .mcp.json</h2>
+        <p>Run this in the project folder:</p>
+        <figure class="code">
+          <figcaption id="code-1">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-1"><code>claude mcp add --transport http --scope project openaiDocs https://developers.openai.com/mcp</code></pre>
+        </figure>
+        <p>It wrote this file at the project root: <span class="ev ev-observed">Observed</span></p>
+        <figure class="code">
+          <figcaption id="code-2">.mcp.json</figcaption>
+          <pre tabindex="0" aria-labelledby="code-2"><code>{
+  "mcpServers": {
+    "openaiDocs": {
+      "type": "http",
+      "url": "https://developers.openai.com/mcp"
+    }
+  }
+}</code></pre>
+        </figure>
+        <p>Without <code>--scope project</code>, the entry goes to <code>~/.claude.json</code> instead, for you only. <span class="ev ev-vendor">Vendor docs</span> A project server has to be approved once, and until then <code>claude mcp list</code> shows it as <code>⏸ Pending approval (run `claude` to approve)</code>. <span class="ev ev-observed">Observed</span> Starting <code>claude</code> in the folder asks you to approve it. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>Print mode is the exception. <code>claude -p</code> connected the server without any approval while <code>mcp list</code> still said "Pending approval", which matches Anthropic's documentation. <span class="ev ev-observed">Observed</span> So a script that runs <code>claude -p</code> in a repository you haven't reviewed will start whatever servers its <code>.mcp.json</code> lists.</p>
+        <h3>Calling a tool</h3>
+        <p>Tools appear as <code>mcp__openaiDocs__search_openai_docs</code>. Claude Code loads MCP tools on demand by default, so the model first has to find the tool with its tool-search step. <span class="ev ev-vendor">Vendor docs</span> With Haiku 4.5 that worked in one of two runs; in the other, the model decided it couldn't call MCP tools and never tried. <span class="ev ev-observed">Observed</span> This command made the call directly, on the first turn:</p>
+        <figure class="code">
+          <figcaption id="code-3">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-3"><code>claude -p "Use the openaiDocs MCP server's search tool to search for 'Docs MCP' and quote the lvl1 title of the first hit. One line." \
+  --strict-mcp-config --mcp-config .mcp.json --tools "" \
+  --allowedTools "mcp__openaiDocs__*" &lt; /dev/null</code></pre>
+        </figure>
+        <p><code>--strict-mcp-config</code> keeps out every server except the ones in the file you pass, including any claude.ai connectors on your account, and <code>--tools ""</code> removes the built-in tools, so the MCP tools are all the model has. <code>--allowedTools</code> lets the calls run without asking. Without <code>&lt; /dev/null</code>, print mode waited three seconds for input and printed a warning. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="codex">Codex: config.toml</h2>
+        <p>Codex reads MCP servers from <code>~/.codex/config.toml</code>, and from <code>.codex/config.toml</code> in a project only when you have trusted that project. <span class="ev ev-vendor">Vendor docs</span></p>
+        <figure class="code">
+          <figcaption id="code-4">~/.codex/config.toml</figcaption>
+          <pre tabindex="0" aria-labelledby="code-4"><code>[mcp_servers.openaiDocs]
+url = "https://developers.openai.com/mcp"</code></pre>
+        </figure>
+        <p><code>codex mcp add openaiDocs --url https://developers.openai.com/mcp</code> writes the same table for you. <span class="ev ev-vendor">Vendor docs</span> In a project we hadn't trusted, Codex ignored the project file without any warning: the server was missing from <code>codex mcp list</code>, and the model said it had no such server. Trusting the project fixed both. <span class="ev ev-observed">Observed</span></p>
+        <p>To try a server without editing any file, pass the same key with <code>-c</code>:</p>
+        <figure class="code">
+          <figcaption id="code-5">Terminal</figcaption>
+          <pre tabindex="0" aria-labelledby="code-5"><code>codex exec --json --sandbox read-only \
+  -c 'mcp_servers.openaiDocs.url="https://developers.openai.com/mcp"' \
+  "Use the openaiDocs MCP server's search_openai_docs tool to search for 'Docs MCP' and reply with only the hierarchy lvl1 title of the first hit." &lt; /dev/null</code></pre>
+        </figure>
+        <p>With <code>--json</code>, each step is one JSON line, and the MCP call is easy to find. Codex didn't ask for approval before the call. <span class="ev ev-observed">Observed</span></p>
+        <figure class="code">
+          <figcaption id="code-6">One line of the output, shortened</figcaption>
+          <pre tabindex="0" aria-labelledby="code-6"><code>{"type":"mcp_tool_call","server":"openaiDocs","tool":"search_openai_docs","arguments":{"query":"Docs MCP"},"status":"completed","error":null, …}</code></pre>
+        </figure>
+        <p>Before that call, Codex read a skill about OpenAI's docs that comes bundled with Codex, so yours may do the same. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="opencode">OpenCode: opencode.json</h2>
+        <p>OpenCode lists servers under <code>mcp</code>, with <code>type</code> set to <code>remote</code> for a URL or <code>local</code> for a command. <span class="ev ev-vendor">Vendor docs</span></p>
+        <figure class="code">
+          <figcaption id="code-7">opencode.json, at the project root</figcaption>
+          <pre tabindex="0" aria-labelledby="code-7"><code>{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "openaiDocs": {
+      "type": "remote",
+      "url": "https://developers.openai.com/mcp",
+      "enabled": true
+    }
+  }
+}</code></pre>
+        </figure>
+        <p>There was no trust or approval step. <code>opencode mcp list</code> connected to the server and printed <code>✓ openaiDocs connected</code>. <span class="ev ev-observed">Observed</span></p>
+        <p>Tools are named <code>&lt;server&gt;_&lt;tool&gt;</code>, here <code>openaiDocs_search_openai_docs</code>. <span class="ev ev-observed">Observed</span> Our first run went wrong twice. The model sent the <code>limit</code> argument as the string <code>"10"</code>, and the server rejected it with MCP error <code>-32602</code>. The retry returned about 55&nbsp;KB, which OpenCode replaced with a note and saved to a file under <code>~/.local/share/opencode/tool-output/</code>. The model never read the file and gave a wrong title. Asking for one result, with the limit as a number, fixed both. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="broken">When the server is broken</h2>
+        <p>We changed the URL to <code>https://developers.openai.com/mcp-nope</code>, which returns 404, and ran the same commands. <span class="ev ev-observed">Observed</span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Runtime</th><th>The list command</th><th>A real session</th></tr></thead>
+          <tbody>
+            <tr><td>Claude Code</td><td>After approval: <code>✘ Failed to connect — MCP endpoint not found</code>. Before approval it shows only "Pending approval" and doesn't try.</td><td><code>claude -p</code> exits 0 and the model answers anyway. The only sign is <code>"status":"failed"</code> for the server in the <code>--output-format stream-json</code> start-up event.</td></tr>
+            <tr><td>Codex</td><td>Shows <code>enabled</code>, exactly as for the working server. The column reports your config and never contacts the server.</td><td><code>codex exec</code> exits 0 and the model answers. Standard error gets two <code>ERROR rmcp::transport::worker</code> lines with <code>HTTP 404</code>.</td></tr>
+            <tr><td>OpenCode</td><td><code>✗ badDocs failed</code> with <code>SSE error: Non-200 status code (404)</code>. It says SSE although the transport is streamable HTTP.</td><td><code>opencode run</code> exits 0 and says nothing about the server.</td></tr>
+          </tbody>
+        </table></div>
+        <p>In all three, a broken optional server leaves a session that works but quietly lacks the tools. In scripts, check the list command first. In Codex, also set <code>required = true</code> on a server you can't do without. With it, <code>codex exec</code> stopped with exit status 1 and <code>required MCP servers failed to initialize</code>. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="side-by-side">Side by side</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th></th><th>Claude Code</th><th>Codex</th><th>OpenCode</th></tr></thead>
+          <tbody>
+            <tr><td>Project file</td><td><code>.mcp.json</code></td><td><code>.codex/config.toml</code>, trusted projects only</td><td><code>opencode.json</code></td></tr>
+            <tr><td>Remote entry</td><td><code>"type": "http", "url"</code></td><td><code>url</code></td><td><code>"type": "remote", "url"</code></td></tr>
+            <tr><td>Tool name</td><td><code>mcp__openaiDocs__search_openai_docs</code></td><td><code>search_openai_docs</code> on server <code>openaiDocs</code></td><td><code>openaiDocs_search_openai_docs</code></td></tr>
+            <tr><td>Does the list command connect?</td><td>Yes, once approved</td><td>No</td><td>Yes</td></tr>
+            <tr><td>Approval before use</td><td>Once per project, except in <code>-p</code></td><td>None in <code>~/.codex</code>; a project file needs a trusted project</td><td>None</td></tr>
+          </tbody>
+        </table></div>
+        <p>Each row is what we saw with the versions above. <span class="ev ev-observed">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="not-verified">What we haven't verified</h2>
+        <ul>
+          <li>The desktop apps. We ran all three runtimes in a terminal.</li>
+          <li>Servers that need OAuth or a key, and local servers started as a command.</li>
+          <li>Other models. Whether the model calls the tool at all varied between runs, and a stronger model may behave differently. <span class="ev ev-unverified">Not verified</span></li>
+        </ul>
+      </section>
+
+      <nav class="series" aria-label="Series">
+        <a class="prev" href="/learn/claude-md/"><small>Previous</small>How Claude Code loads CLAUDE.md</a>
+        <a class="next" href="/learn/skills-across-vendors/"><small>Next</small>One skill for Claude Code, Codex and OpenCode</a>
+      </nav>
+      <p class="lastverified">Last verified 2026-09-25 · review by 2026-10-25</p>
+    </article>
+  </div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Release status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · One memory. One rulebook. Every agent. ·
+    Proposed open-source project · The roads are private. The crosswalk is public. · Licensing and release details are not final.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>
