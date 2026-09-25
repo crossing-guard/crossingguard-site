@@ -39,7 +39,7 @@
     <p class="crumb"><a href="/">Home</a> › <a href="/learn/">Learn</a> › Skills across vendors</p>
     <p class="eyebrow">Tutorial · 10 min read · Claude Code · Codex · OpenCode</p>
     <h1>One skill for Claude Code, Codex and OpenCode: where each looks, and how to tell it loaded</h1>
-    <p class="lede">Claude Code, Codex and OpenCode all read skills written as a SKILL.md file, but each looks in different folders and treats the frontmatter differently. We gave all three the same code-review skill and a change with a real bug. Each one found the bug. Getting there taught us which folders to use, which frontmatter fields to leave out, and why a correct answer doesn't prove the skill loaded.</p>
+    <p class="lede">Claude Code, Codex and OpenCode all read skills written as a SKILL.md file, but each looks in different folders and treats the frontmatter differently. We gave all three the same code-review skill and a change with a real bug. Each one found the bug. Getting there taught us which folders to use, why the frontmatter has to be valid YAML, and why a correct answer doesn't prove the skill loaded.</p>
     <aside class="verified" aria-label="What this tutorial was verified on">
       <p class="vh">Verified on</p>
       <dl>
@@ -167,11 +167,13 @@ ln -s ../../.claude/skills/tutorial-review .agents/skills/tutorial-review</code>
           <thead><tr><th>Change</th><th>Claude Code</th><th>Codex</th><th>OpenCode</th></tr></thead>
           <tbody>
             <tr><td>No <code>description</code></td><td>Still works as <code>/tutorial-review</code>, described by its first heading, but Claude didn't choose it for a plain prompt</td><td>Skips it, with <code>missing field `description`</code> on standard error only. Exit status 0</td><td>Loads it only when asked by name. The model's list of skills leaves it out, with no warning</td></tr>
-            <tr><td>Claude's <code>argument-hint: [file] [focus]</code> added</td><td>Works</td><td>Works</td><td>Drops the skill without any message, even at debug log level</td></tr>
+            <tr><td>Claude's <code>argument-hint: [file] [focus]</code> added, not quoted</td><td>Works</td><td>Works</td><td>Drops the skill without any message, even at debug log level</td></tr>
             <tr><td>An unquoted colon inside the description</td><td>Works</td><td>Works</td><td>Works</td></tr>
           </tbody>
         </table></div>
-        <p>OpenCode's documentation lists four frontmatter fields: <code>name</code>, <code>description</code>, <code>license</code> and <code>compatibility</code>. It also requires the name to be lowercase words joined by hyphens, matching the folder name. <span class="ev ev-vendor">Vendor docs</span> For a skill you share across runtimes, keep to <code>name</code> and <code>description</code>. Put Claude-only controls such as <code>disable-model-invocation</code> and <code>argument-hint</code> in a Claude-only copy, because OpenCode may drop a skill it can't parse.</p>
+        <p>The <code>argument-hint</code> row is about YAML, not the field. A value that starts with <code>[</code> is read as a list, so <code>[file] [focus]</code> without quotes is a syntax error. Claude Code and Codex loaded the skill anyway, and OpenCode skipped it. <span class="ev ev-observed">Observed</span> Quoting the value, as in <code>argument-hint: "[file] [focus]"</code>, fixed it. After we quoted it in three skills that had the unquoted form, OpenCode listed all three, and Claude Code still listed them as skills and slash commands. <span class="ev ev-observed">Observed</span></p>
+        <p>Fields OpenCode doesn't know are fine once the YAML is valid. The same three skills also carry Claude's <code>disable-model-invocation</code>, <code>context</code> and <code>agent</code> fields, and OpenCode listed them. <span class="ev ev-observed">Observed</span> Its documentation names four fields, <code>name</code>, <code>description</code>, <code>license</code> and <code>compatibility</code>, and requires the name to be lowercase words joined by hyphens, matching the folder name. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>Because OpenCode skips a broken skill without a word, check with <code>opencode debug skill</code>, which prints every skill it found as JSON. On our Mac, piping that output cut it off at about 64&nbsp;KB, so write it to a file before searching it. <span class="ev ev-observed">Observed</span></p>
         <p>Instructions in a skill are requests to the model. "Do not edit files" held in our runs, but the runtime's own permissions and sandbox are what stop an edit. We ran Codex with <code>--sandbox read-only</code> for that reason.</p>
       </section>
 
