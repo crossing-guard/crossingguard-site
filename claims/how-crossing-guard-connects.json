@@ -1,0 +1,181 @@
+{
+ "page": "/learn/how-crossing-guard-connects/",
+ "claims": [
+  {
+   "id": "t2-install-claude",
+   "wording": "Installation adds one Claude Code hook entry per event; every entry runs the same command, and turn events add --observe.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25); Claude Code 2.1.280",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-install-codex",
+   "wording": "Installation writes the same command to the Codex hooks file for Codex's own event set.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25); Codex CLI 0.154.0-alpha.6.2",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-install-opencode",
+   "wording": "One OpenCode plugin runs the executable before and after each tool call; it throws on deny only for the verified OpenCode version.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25); OpenCode 1.18.0",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-desktop-sessions",
+   "wording": "Nearly every recent Claude desktop session on our install produced live hook events without per-session setup.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard builds installed 2026-09-08..09-24; Claude Code desktop 2.1.212 to 2.1.280; macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-bridge",
+   "wording": "The hook finds the daemon through the address and token files; every request carries the token, and requests that can carry a note back carry a deadline.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-loopback",
+   "wording": "The hook talks only to the address the daemon published, loopback by default.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-budgets",
+   "wording": "Observation 1.5 s, stateful rules 400 ms, approval 55 s for Claude Code and Codex.",
+   "evidence_class": "source-verified behavior",
+   "strength": "best-effort",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-observe-timeouts",
+   "wording": "On busy September days a noticeable share of Claude Code tool calls waited the full 1.5 s observation budget.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard builds installed 2026-09-01..09-25; Claude Code 2.1.280; macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-failure-modes",
+   "wording": "The four failure behaviours for Claude Code and Codex, and OpenCode's allow-on-error, deny-on-ask behaviour.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-natural-managed",
+   "wording": "Managed sessions fire the same installed hooks plus the approval bridge; helpers are never told who launched a session.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-transcripts",
+   "wording": "Model replies are read from session files; for Claude Code so is hook-added context; the transcript path triggers a re-read.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-delivery",
+   "wording": "Pending notes with expiry and cap, claimed at the next prompt or allowed tool call in our configuration, printed as added context.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25); installed orchestration.json (2026-09-13)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-delivery-rules",
+   "wording": "A denied call never carries a note; a note is claimed when the reply is prepared, returned on a failed write, and handed off only after the write.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-claude-delivery",
+   "wording": "Claude Code sessions receive notes, matched to the transcripts that contain them.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Crossing Guard builds installed 2026-09-13..09-25; Claude Code up to 2.1.280; macOS",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Observed on the maintainers' own install; install records are private and not published.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-codex-delivery",
+   "wording": "Codex delivery defaults to the Codex queue subcommand; a hook route is an option.",
+   "evidence_class": "source-verified behavior",
+   "strength": "planned",
+   "versions": "Crossing Guard source c721985 (2026-09-25)",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "t2-opencode-delivery",
+   "wording": "The OpenCode plugin adds the note through the SDK without asking for a reply.",
+   "evidence_class": "source-verified behavior",
+   "strength": "planned",
+   "versions": "Crossing Guard source c721985 (2026-09-25); OpenCode 1.18.0",
+   "verified_on": "2026-09-25",
+   "review_by": "2026-10-25",
+   "evidence_private_reason": "Product source is not yet published; verified by reading the source on the verification date.",
+   "owner": "Crossing Guard maintainers"
+  }
+ ]
+}

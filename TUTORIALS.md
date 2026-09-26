@@ -101,7 +101,7 @@ Put a label straight after each factual sentence:
 | Label | Class | Use it when |
 | --- | --- | --- |
 | Observed | `ev ev-observed` | You ran it on a real install at the stated versions. |
-| In source (not yet public) | `ev ev-source` | You read it in the product code but did not exercise it. |
+| In source | `ev ev-source` | You read it in the product code but did not exercise it. |
 | Vendor docs | `ev ev-vendor` | The vendor's current documentation says so. Link the page at the end of the article. |
 | Not verified | `ev ev-unverified` | You believe it but have not confirmed it. Explain it under "What we haven't verified". |
 
