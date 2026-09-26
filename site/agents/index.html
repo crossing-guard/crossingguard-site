@@ -36,7 +36,7 @@
     <p class="eyebrow">AI agents on your native sessions</p>
     <h1>Your workflow.<br>Your supporting cast.</h1>
     <p class="sub">Bring reviewer, helper, and follower agents into the coding workflow you already use. Choose the models behind the roles. Give each a job worth doing.</p>
-    <p class="agent-note"><b>Marketing concept.</b> Role examples explain the intended experience, not a live demonstration or a release support promise. Spontaneous Memory below is a proposed capability.</p>
+    <p class="agent-note"><b>Marketing concept.</b> Role examples explain the intended experience, not a live demonstration or a release support promise. Spontaneous Memory, below, runs on our own Claude Code sessions in a pre-release build, and <a href="/learn/spontaneous-memory/">the tutorial</a> shows how it works, limits included.</p>
     <div class="heroctas"><a class="btn" href="#agent-roles">Meet the supporting cast ↓</a><a class="btn-ghost" href="#spontaneous-memory">The spontaneous “aha” ↓</a></div>
   </div></div>
 
@@ -72,22 +72,24 @@
     <div class="panel"><div class="ph">One reviewer, different projects · illustrative example</div><div class="pb"><p><b>Shared mechanism:</b> run a reviewer and record its findings.</p><p><b>Your configuration:</b> choose its model and instructions—review database changes for one project, accessibility for another.</p><p><b>An extension when needed:</b> connect a project-specific checker through a supported integration point.</p></div></div>
     <h3>The frontend makes those choices visible.</h3>
     <p>The interface brings configuration and results together: what is selected, which agent contributed, and what it reported. Available controls depend on the implemented role and integration; configuration is not a promise that every option has a visual editor.</p>
-    <p class="agent-note">A supplied configuration pack is a starting point, not a mandatory workflow. Configuration cannot create a missing hook, enable unsupported live interruption, or grant an agent authority by itself. Spontaneous Memory's proposed delivery choices remain subject to those same boundaries.</p>
+    <p class="agent-note">A supplied configuration pack is a starting point, not a mandatory workflow. Configuration cannot create a missing hook, enable unsupported live interruption, or grant an agent authority by itself. Spontaneous Memory's delivery stays within those same boundaries.</p>
   </div></div>
 
   <div class="band memory-band"><div class="wrap sec" id="spontaneous-memory">
-    <p class="eyebrow">Spontaneous Memory · proposed concept</p>
+    <p class="eyebrow">Spontaneous Memory · pre-release · in daily use on our own Claude Code sessions</p>
     <h2>The “aha” you didn't know to ask for.</h2>
     <p class="agent-lead">Your main agent follows the task. A memory follower looks beyond that immediate context for a past decision, forgotten constraint, or relevant lesson that could change the work.</p>
-    <p>It isn't only remembering what you asked it to remember. It's making a useful connection to knowledge outside the main line of context—and bringing it back when it matters.</p>
+    <p>It goes beyond what you asked it to remember. It connects the task to knowledge outside the main line of context, and brings it back when it matters.</p>
     <blockquote class="agent-example">“Before you continue: we tried this approach before. Here's why we changed it.”</blockquote>
     <p class="agent-note">Illustrative message, not an actual retrieved memory or product transcript.</p>
     <div class="steps">
-      <div class="step"><h3>At a workflow event</h3><p>Surface an insight at a supported checkpoint, when the working agent has an opportunity to use it.</p></div>
-      <div class="step"><h3>During the work</h3><p>For an important insight, interrupt the working agent where live delivery is supported and explicitly authorized.</p></div>
+      <div class="step"><h3>At the next prompt or tool call</h3><p>The note arrives with the session's next prompt or tool call, at a moment when the working agent can use it.</p></div>
+      <div class="step"><h3>Only when it matters</h3><p>Most turns end without a note. The follower speaks up when a past decision adds something the session hasn't already acknowledged.</p></div>
     </div>
-    <details><summary>Will a memory always interrupt my agent?</summary><p>No. Event-triggered delivery, queued messages, and live interruption are different capabilities. An event or queued delivery must not be presented as an immediate interruption. Spontaneous Memory and its delivery behavior need implementation and runtime-specific verification before a release claim.</p></details>
+    <details><summary>Will a memory interrupt my agent?</summary><p>No. A note waits for the session's next prompt or tool call and arrives as added context, so the agent is never stopped partway through a step. Live interruption is a different capability and isn't part of Spontaneous Memory. Today notes reach Claude Code sessions. Delivery to Codex and OpenCode is built but we haven't seen it work yet.</p></details>
+    <details><summary>Where does the helper's model run?</summary><p>On our install the helper uses a hosted model, so the conversation excerpts and memory records it reads are sent to that provider. It can be pointed at a local model instead, which we haven't tested end to end yet.</p></details>
     <details><summary>Does an “aha” give the follower permission to act?</summary><p>No. A relevant memory is context, not an instruction with higher authority. The follower's contribution remains separate from permission to approve, change files, or control another agent.</p></details>
+    <p><a class="btn-ghost" href="/learn/spontaneous-memory/">How Spontaneous Memory works →</a></p>
   </div></div>
 
   <div class="band"><div class="wrap sec">
