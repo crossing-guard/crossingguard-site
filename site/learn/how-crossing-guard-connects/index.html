@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Crossing Guard connects to live agent sessions</title>
+<meta name="description" content="How Crossing Guard hooks into Claude Code, Codex and OpenCode: what installation writes, the time budgets, what happens on failure, and how notes reach a session.">
+<link rel="canonical" href="https://crossingguard.dev/learn/how-crossing-guard-connects/">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<meta name="verified-on" content="2026-09-25">
+<meta name="review-by" content="2026-10-25">
+<meta name="tested-versions" content="Crossing Guard development build (2026-09-25); Claude Code 2.1.280 (desktop app); Codex CLI 0.154.0-alpha.6.2; OpenCode 1.18.0; macOS">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How Crossing Guard connects to live Claude Code, Codex and OpenCode sessions", "description": "How Crossing Guard hooks into Claude Code, Codex and OpenCode: what installation writes, the time budgets, what happens on failure, and how notes reach a session.", "datePublished": "2026-09-25", "dateModified": "2026-09-25", "mainEntityOfPage": "https://crossingguard.dev/learn/how-crossing-guard-connects/", "author": {"@type": "Organization", "name": "Crossing Guard"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M21.07 5.12 A12 12 0 1 0 26.88 10.93" fill="none" stroke="#26262E" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="24.49" cy="7.51" r="2.8" fill="#5F6B0A"/>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a class="cta" href="/learn/" aria-current="true">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/learn/">Learn</a> › How Crossing Guard connects</p>
+    <p class="eyebrow">How it works · 10 min read</p>
+    <h1>How Crossing Guard connects to live Claude Code, Codex and OpenCode sessions</h1>
+    <p class="lede">Crossing Guard puts one command in each runtime's hook configuration. The command passes each event to a daemon on your machine, waits a limited time for an answer, and hands the answer back to the runtime as a decision or as a note for the model. This page follows an event through those steps: what installation writes, how long each step may take, what happens when one fails, and how a note gets back into a session.</p>
+    <aside class="verified" aria-label="What this page was verified on">
+      <p class="vh">Verified on</p>
+      <dl>
+        <dt>Crossing Guard</dt><dd>The development build installed on our own machines (macOS)</dd>
+        <dt>Runtimes</dt><dd>Claude Code 2.1.280 (desktop app) · Codex CLI 0.154.0-alpha.6.2 · OpenCode 1.18.0</dd>
+        <dt>Method</dt><dd>Read in the source on 2026-09-25 and checked against the installed configuration and its records. Vendor docs read the same day.</dd>
+      </dl>
+      <p class="legend">Each factual sentence carries a label saying how we know it:
+        <span class="ev ev-observed">Observed</span> seen on a real install ·
+        <span class="ev ev-source">In source</span> read in the source code ·
+        <span class="ev ev-vendor">Vendor docs</span> the vendor's current documentation says so ·
+        <span class="ev ev-unverified">Not verified</span> we have not confirmed it.</p>
+    </aside>
+  </div></div>
+
+  <div class="wrap article-layout">
+    <nav class="toc" aria-label="On this page">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#the-shape">The four steps</a></li>
+        <li><a href="#what-install-writes">What installation writes</a></li>
+        <li><a href="#the-bridge">From hook to daemon</a></li>
+        <li><a href="#time-budgets">Time budgets</a></li>
+        <li><a href="#when-things-fail">When something fails</a></li>
+        <li><a href="#your-sessions-and-ours">Sessions you start and sessions it starts</a></li>
+        <li><a href="#talking-back">Sending a note to a session</a></li>
+        <li><a href="#not-verified">What we haven't verified</a></li>
+      </ol>
+    </nav>
+
+    <article class="article">
+      <section>
+        <h2 id="the-shape">The four steps</h2>
+        <ol class="flow">
+          <li>The runtime reaches one of its hook points: a prompt was submitted, a tool is about to run, or a tool has finished.</li>
+          <li>A short-lived <code>crossing-guard hook</code> process reads the event from standard input and sends it to the daemon on your machine.</li>
+          <li>The daemon stores the event, evaluates any rules that apply, and checks whether a note is waiting for this session.</li>
+          <li>The hook prints the decision or the added context in the runtime's own format, and exits.</li>
+        </ol>
+        <p>The <a href="/learn/claude-code-hooks/">hooks tutorial</a> writes steps 1 and 4 by hand. Crossing Guard adds steps 2 and 3.</p>
+      </section>
+
+      <section>
+        <h2 id="what-install-writes">What installation writes</h2>
+        <p>For Claude Code, installation adds one entry per event to <code>~/.claude/settings.json</code>: prompt submission, stop, before and after each tool call (including failed calls), session start and end, notifications that ask for your permission or input, subagent stop, and compaction. Every entry runs the same command, and turn events add <code>--observe</code> with the kind of observation they record. <span class="ev ev-source" data-claim="t2-install-claude">In source</span></p>
+        <figure class="code">
+          <figcaption id="code-1">~/.claude/settings.json (excerpt)</figcaption>
+          <pre tabindex="0" aria-labelledby="code-1"><code>"PreToolUse": [{ "matcher": "*", "hooks": [{ "type": "command",
+  "command": "\"/path/to/crossing-guard\" hook --runtime claude" }] }],
+"UserPromptSubmit": [{ "hooks": [{ "type": "command",
+  "command": "\"/path/to/crossing-guard\" hook --runtime claude --observe turn.started" }] }]</code></pre>
+        </figure>
+        <p>Codex gets the same command in <code>~/.codex/hooks.json</code> (or <code>$CODEX_HOME/hooks.json</code>) for its own set of events. There's no tool matcher, a permission-request event takes the place of notifications, and there's no failed-tool event. <span class="ev ev-source" data-claim="t2-install-codex">In source</span> Codex runs each entry only after you trust it with <code>/hooks</code>. <span class="ev ev-vendor">Vendor docs</span></p>
+        <p>OpenCode gets one plugin file in its plugins directory. The plugin runs the same executable before and after each tool call. When your OpenCode version matches the one we verified, it turns a deny into a thrown error, and otherwise it only records. <span class="ev ev-source" data-claim="t2-install-opencode">In source</span></p>
+        <p>These are user-level settings, so desktop sessions pick them up too. On our install, nearly every recent Claude desktop session produced live hook events with no setup per session. <span class="ev ev-observed" data-claim="t2-desktop-sessions">Observed</span></p>
+      </section>
+
+      <section>
+        <h2 id="the-bridge">From hook to daemon</h2>
+        <p>The hook process finds the daemon through two files in the Crossing Guard data directory. One holds the address the daemon listens on, and the other holds an access token that only your user account can read. Every request carries that token. The requests that can carry a note back also carry a deadline: the moment the hook will stop waiting for an answer. <span class="ev ev-source" data-claim="t2-bridge">In source</span></p>
+        <p>The deadline lets the daemon decide whether there's still time to add a note to its reply before the hook gives up. On this path the hook talks only to the address the daemon published, which is loopback (127.0.0.1) by default. <span class="ev ev-source" data-claim="t2-loopback">In source</span> Traffic between an agent and its own model provider is separate, and the runtime controls it.</p>
+      </section>
+
+      <section>
+        <h2 id="time-budgets">Time budgets</h2>
+        <p>The model's next action waits for the hook, so each kind of request has its own time limit: <span class="ev ev-source" data-claim="t2-budgets">In source</span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Request</th><th>Budget</th><th>If the budget runs out</th></tr></thead>
+          <tbody>
+            <tr><td>Record an observation</td><td>1.5 s</td><td>The tool runs; the event is kept in a local spool and sent later</td></tr>
+            <tr><td>Check stateful rules</td><td>400 ms</td><td>The tool runs</td></tr>
+            <tr><td>Ask a person to approve (Claude Code and Codex)</td><td>55 s</td><td>The call is denied</td></tr>
+          </tbody>
+        </table></div>
+        <p>The vendors allow far longer. Claude Code's default timeout for a command hook is 600 seconds, <span class="ev ev-vendor">Vendor docs</span> so these budgets are Crossing Guard's choice.</p>
+        <aside class="callout caution">
+          <p class="ct">Measured on our install</p>
+          <p>On busy days in September, a noticeable share of Claude Code tool calls on our install waited the full 1.5 seconds before running. <span class="ev ev-observed" data-claim="t2-observe-timeouts">Observed</span> Those events were kept in the spool and sent later, but the person at the keyboard felt the wait, and we're working on it. If you write your own hooks, measure their latency while the machine is busy.</p>
+        </aside>
+      </section>
+
+      <section>
+        <h2 id="when-things-fail">When something fails</h2>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Failure</th><th>What happens</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Daemon not running</td><td>The event goes to the local spool and is replayed later. Rules evaluated locally still apply, so the tool runs unless one of them denies it or needs approval</td><td>Recording an event shouldn't stop your tool call</td></tr>
+            <tr><td>Event can't be parsed</td><td>The call is allowed, with a note on standard error</td><td>A change in a vendor's format should leave one event unrecorded, not block work</td></tr>
+            <tr><td>Rules file present but broken</td><td>The call is denied</td><td>A broken policy shouldn't quietly become no policy</td></tr>
+            <tr><td>Approval needed and nobody answers</td><td>The call is denied</td><td>Silence isn't approval</td></tr>
+          </tbody>
+        </table></div>
+        <p>These are the Claude Code and Codex behaviours. OpenCode's plugin allows the call when something inside it fails, and denies anything that would need approval. <span class="ev ev-source" data-claim="t2-failure-modes">In source</span></p>
+      </section>
+
+      <section>
+        <h2 id="your-sessions-and-ours">Sessions you start and sessions it starts</h2>
+        <p>A session you start yourself, from a desktop app, a terminal or an IDE, reaches Crossing Guard through the hooks above. A session Crossing Guard starts for you, such as a helper agent, runs the same runtime and fires the same installed hooks, plus Crossing Guard's own approval bridge. Helpers get the same session signals and delivery path either way, and are never told who launched the session. <span class="ev ev-source" data-claim="t2-natural-managed">In source</span></p>
+        <p>Hooks don't carry everything. The model's own replies are read back from the runtime's session files on disk, and for Claude Code so is the context a hook added. The transcript path in a hook event tells Crossing Guard which file to read again. <span class="ev ev-source" data-claim="t2-transcripts">In source</span></p>
+      </section>
+
+      <section>
+        <h2 id="talking-back">Sending a note to a session</h2>
+        <p>A hook can speak only when the runtime asks it something. A note for a session, such as a recollection from <a href="/learn/spontaneous-memory/">Spontaneous Memory</a>, waits in the daemon until that session's next suitable hook call. For Claude Code and OpenCode, and for Codex when it's set to use its hooks, that works like this: <span class="ev ev-source" data-claim="t2-delivery">In source</span></p>
+        <ol class="flow">
+          <li>The note is stored as pending for that session, with an expiry time and a limit on how many can wait. If no hook call comes before it expires, it's dropped rather than delivered late.</li>
+          <li>When the session next submits a prompt or makes an allowed tool call, the daemon claims the note, provided enough of the hook's deadline is left to write the reply. That's our configuration; the shipped default also uses tool results.</li>
+          <li>The note goes back in the hook's reply, and the hook prints it as added context.</li>
+        </ol>
+        <p>A denied tool call never carries a note. A note is claimed when the reply is prepared, returned to the queue if writing the reply fails, and counted as handed off only after the write succeeds. <span class="ev ev-source" data-claim="t2-delivery-rules">In source</span> Claude Code sessions receive these notes today, and we've matched delivered notes to the transcripts that contain them. <span class="ev ev-observed" data-claim="t2-claude-delivery">Observed</span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Runtime</th><th>How a note arrives</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Claude Code</td><td>In the hook reply, as <code>additionalContext</code></td><td><span class="ev ev-observed" data-claim="t2-claude-delivery">Observed</span></td></tr>
+            <tr><td>Codex</td><td>By default through Codex's <code>queue</code> subcommand, which skips the pending and expiry steps above. Delivery through the hook is an option</td><td><span class="ev ev-source" data-claim="t2-codex-delivery">In source</span></td></tr>
+            <tr><td>OpenCode</td><td>The plugin adds the note through OpenCode's SDK without asking the model to reply</td><td><span class="ev ev-source" data-claim="t2-opencode-delivery">In source</span></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section>
+        <h2 id="not-verified">What we haven't verified</h2>
+        <ul>
+          <li>Notes reaching Codex and OpenCode sessions. The code is there, but we haven't seen it on a live session.</li>
+          <li>Codex hooks other than <code>PreToolUse</code>. All of them are registered, but only that one has fired on our install.</li>
+          <li>Linux and Windows. Everything here ran on macOS. <span class="ev ev-unverified">Not verified</span></li>
+        </ul>
+        <p>Vendor documentation: <a href="https://code.claude.com/docs/en/hooks">Claude Code hooks</a> · <a href="https://learn.chatgpt.com/docs/hooks">Codex hooks</a> · <a href="https://opencode.ai/docs/plugins/">OpenCode plugins</a></p>
+      </section>
+
+      <nav class="series" aria-label="Series">
+        <a class="prev" href="/learn/claude-code-hooks/"><small>Previous</small>Claude Code hooks, Codex hooks and OpenCode plugins</a>
+        <a class="next" href="/learn/spontaneous-memory/"><small>Next</small>Spontaneous Memory: a second agent that reminds your session of past decisions</a>
+      </nav>
+      <p class="lastverified">Last verified 2026-09-25 · review by 2026-10-25</p>
+    </article>
+  </div>
+</main>
+
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Project status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · Monitor and control native agent sessions. ·
+    An open-source project · The roads are private. The crosswalk is public.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>
