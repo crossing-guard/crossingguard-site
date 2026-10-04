@@ -1,0 +1,93 @@
+{
+ "page": "/",
+ "claims": [
+  {
+   "id": "home-runtimes",
+   "wording": "Crossing Guard connects through hook entries for Claude Code, Codex and Cursor and a plugin for OpenCode. Claude Code and Codex can allow, hold or deny a tool call; Codex skips a hook until it is trusted; OpenCode blocks only on the verified version (1.18.0) and records otherwise; Cursor denies, and an ask is denied.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/tree/c26a2cc8/internal/guardcli",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-memory",
+   "wording": "Memory is one Markdown file per record under ~/.crossing-guard/memory. Claude Code and Codex read the same store through a session-start hook installed with crossing-guard attach.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/memory/records.go",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-rules",
+   "wording": "A rule is a JSON object with an id, an action and a condition. The actions are deny, ask, allow, observe and redact. A fresh install selects no rules, and the safety-starter rulebook has five. The git-force-push rule shown is copied from that file.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/ruledoc/rules.safety-starter.json",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-check-output",
+   "wording": "With the safety-starter rules, crossing-guard check printed an ASK line naming git-force-push for a force push to main, and an allow line with no rule matched for git status.",
+   "evidence_class": "installed observation",
+   "strength": "observed",
+   "versions": "Local build of Crossing Guard source c26a2cc8 with Go 1.26; safety-starter rules selected through CG_RULES; macOS",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_private_reason": "Run by the maintainers on a local build of the published commit. The two commands are on the page, so anyone can repeat the run.",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-local",
+   "wording": "The daemon listens on a loopback address by default, and every API route requires a token.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/daemon/main.go",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-handoff",
+   "wording": "The console drafts a handoff note from a session, a person edits it, and publishing writes it into the repository.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/daemon/handoff.go",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-ask",
+   "wording": "An ask rule holds the tool call for a person in a local approvals inbox, and the call is denied when the inbox cannot be reached or the request expires.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/guardcli/main.go",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "home-chain",
+   "wording": "Each session's event log carries a sha256 hash chain, and crossing-guard chain verify recomputes it.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/engine/eventchain.go",
+   "owner": "Crossing Guard maintainers"
+  }
+ ]
+}

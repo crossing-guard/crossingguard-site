@@ -26,6 +26,7 @@
     <a href="/agents/">Agents</a>
     <a href="/compare/">Compare</a>
     <a href="/limits/">Limits</a>
+    <a href="https://github.com/crossing-guard/crossing-guard">GitHub</a>
     <a class="cta" href="/learn/">Learn</a>
   </nav>
 </div></header>
@@ -44,29 +45,32 @@
         <p class="sub">Monitor and control native sessions and tool calls in Claude Code, Codex and OpenCode, with deterministic policies or AI agents.</p>
         <div class="heroctas">
           <a class="btn" href="/learn/">Read the tutorials</a>
-          <a class="btn-ghost" href="/compare/">See the evidence →</a>
+          <a class="btn-ghost" href="https://github.com/crossing-guard/crossing-guard">View the source on GitHub →</a>
         </div>
       </div>
-      <div class="term" role="img" aria-label="Terminal: a rule blocks a push to main across agents">
-        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">claude code — protect-shared-branch</span></div>
-        <div class="body"><span class="l c-dim">› agent wants to run:</span><span class="l"><span class="c-w">git push origin main --force</span></span><span class="l">&nbsp;</span><span class="l c-red">✋ BLOCKED — crossing rule: protect-shared-branch</span><span class="l c-dim">   reason: never force-push a shared branch</span><span class="l c-dim">   coverage: <span class="c-grn">enforced (fail-closed)</span> · claude-code</span><span class="l">&nbsp;</span><span class="l c-dim">› agent:</span><span class="l">"Understood — I'll open a PR instead."</span></div>
+      <div class="term" role="img" aria-label="Terminal: a rule denies a recursive force-delete before it runs">
+        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">claude code — rule destructive-rm</span></div>
+        <div class="body"><span class="l c-dim">› agent wants to run:</span><span class="l"><span class="c-w">rm -rf build/ ../shared/</span></span><span class="l">&nbsp;</span><span class="l c-red">✋ Enforced by rule destructive-rm: recursive force-delete can destroy work irrecoverably — denied.</span><span class="l">&nbsp;</span><span class="l c-dim">› agent:</span><span class="l">"That was blocked. I'll list what's in those folders first."</span></div>
       </div>
     </div>
   </div>
 
-<div class="band alt"><div class="wrap sec" style="padding:22px 20px" id="release-status"><h2>Open source, built in the open.</h2><p>Crossing Guard runs every day on our own Claude Code, Codex and OpenCode sessions. The <a href="/learn/">tutorials</a> show what it does, with the version and date behind each fact. Terminal windows and figures on this page are examples.</p></div></div>
+<div class="band alt"><div class="wrap sec" style="padding:22px 20px" id="release-status"><h2>Open source, built in the open.</h2><p>The framework source is <a href="https://github.com/crossing-guard/crossing-guard">on GitHub</a> under the Apache 2.0 licence, and you build it yourself with Go. Crossing Guard runs every day on our own Claude Code, Codex and OpenCode sessions. The <a href="/learn/">tutorials</a> show what it does, with the version and date behind each fact. The agent conversation above is an example. The command output further down is copied from a build of the published source.</p></div></div>
   <div class="band"><div class="wrap sec">
     <p class="eyebrow">Works with the agents you already use — and says exactly how well</p>
     <div class="agents">
-      <div class="agent"><span class="mk" style="background:#A94F31">CC</span> Claude Code <span class="v v-enf">Proven</span></div>
-      <div class="agent"><span class="mk" style="background:#1F2124">CX</span> Codex <span class="v v-enf">Proven</span></div>
-      <div class="agent"><span class="mk" style="background:#2F6E2B">OC</span> OpenCode <span class="v v-enf">Proven</span></div>
-      <div class="agent"><span class="mk" style="background:#5A6570">CP</span> Copilot CLI <span class="v v-adv">Registered</span></div>
-      <div class="agent"><span class="mk" style="background:#2E6BB0">GM</span> Gemini CLI <span class="v v-adv">Registered</span></div>
+      <div class="agent"><span class="mk" style="background:#A94F31">CC</span> Claude Code <span class="v v-enf">Allow · ask · deny</span></div>
+      <div class="agent"><span class="mk" style="background:#1F2124">CX</span> Codex <span class="v v-enf">Allow · ask · deny</span></div>
+      <div class="agent"><span class="mk" style="background:#2F6E2B">OC</span> OpenCode <span class="v v-adv">Deny on 1.18.0</span></div>
+      <div class="agent"><span class="mk" style="background:#5A6570">CU</span> Cursor <span class="v v-adv">Deny only</span></div>
     </div>
-    <p class="prose" style="font-size:14.5px">Same binary, same rule file, demonstrated live on three agents across three model
-      families. The two "registered" agents have their hook seams mapped; coverage is probed before we ever
-      call it proven. <b>We never claim a wall we didn't build</b> — that honesty is the product.</p>
+    <p class="prose" style="font-size:14.5px">One binary connects to each agent at its own extension point: hook entries for Claude Code,
+      Codex and Cursor, and a plugin for OpenCode. Claude Code and Codex can allow a tool call, hold it for you, or deny it.
+      Codex skips a hook until you trust it once in its <span style="font-family:var(--mono)">/hooks</span> screen.
+      OpenCode blocks only on the version we verified (1.18.0) and records on any other. Cursor denies, and a rule that
+      would ask is denied too. <a data-claim="home-runtimes" href="https://github.com/crossing-guard/crossing-guard/tree/c26a2cc8/internal/guardcli">Read the installers →</a></p>
+    <p class="prose" style="font-size:14.5px"><b>A registered hook is not a firing hook.</b>
+      <span style="font-family:var(--mono)">crossing-guard verify</span> and <span style="font-family:var(--mono)">doctor</span> report the hook events they have seen on your machine.</p>
   </div></div>
 
 
@@ -75,29 +79,33 @@
 
     <div class="pillar">
       <div class="txt"><p class="num">01</p><h2>One memory</h2>
-        <p class="prose">Your project knowledge follows you between agents — files-first, no vendor store.
-          Hit a limit on one, pick up on another with the context intact.</p></div>
-      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing memory — carry</span></div>
-        <div class="body"><span class="l prompt c-w">crossing carry --from claude --to codex</span><span class="l c-dim">  reading 3 dossiers, 1 open session…</span><span class="l c-grn">  ✓ memory injected into codex session</span><span class="l c-grn">  ✓ 41 min of context preserved</span><span class="l c-dim">  nothing left the machine.</span></div>
+        <p class="prose">Project memory is plain Markdown on your disk, one file per record, with no vendor store.
+          Claude Code and Codex read the same files: a session-start hook adds the records for the repository
+          you are in. <a data-claim="home-memory" href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/memory/records.go">See the store →</a></p></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing-guard — memory</span></div>
+        <div class="body"><span class="l prompt c-w">crossing-guard attach claude</span><span class="l prompt c-w">crossing-guard attach codex</span><span class="l prompt c-w">ls ~/.crossing-guard/memory</span><span class="l c-dim">  api-retry-policy.md</span><span class="l c-dim">  release-checklist.md</span><span class="l c-dim">  recall-log.jsonl</span><span class="l c-dim">  (file names are examples)</span></div>
       </div>
     </div>
 
     <div class="pillar flip">
-      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing coverage — the honest report</span></div>
-        <div class="body"><span class="l prompt c-w">crossing coverage protect-shared-branch</span><span class="l c-dim">  rule → per-agent enforcement:</span><span class="l">  claude-code   <span class="c-grn">enforced (fail-closed)</span></span><span class="l">  codex         <span class="c-grn">enforced (fail-closed)</span></span><span class="l">  opencode      <span class="c-yel">best-effort (fails open on timeout)</span></span><span class="l">  copilot-cli   <span class="c-dim">unsupported — seam not yet probed</span></span></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">rules.safety-starter.json — one rule</span></div>
+        <div class="body"><span class="l c-cy">{</span><span class="l">  <span class="c-yel">"id"</span>: <span class="c-grn">"git-force-push"</span>,</span><span class="l">  <span class="c-yel">"action"</span>: <span class="c-grn">"ask"</span>,</span><span class="l">  <span class="c-yel">"message"</span>: <span class="c-grn">"force push can discard published history for everyone"</span>,</span><span class="l">  <span class="c-yel">"backstop"</span>: <span class="c-grn">"remote-branch-protection"</span>,</span><span class="l">  <span class="c-yel">"if"</span>: { <span class="c-yel">"tag"</span>: <span class="c-grn">"command"</span>,</span><span class="l">          <span class="c-yel">"matches"</span>: <span class="c-grn">"\\bgit\\s+push\\b.*(--force\\b|…)"</span> }</span><span class="l c-cy">}</span></div>
       </div>
       <div class="txt"><p class="num">02</p><h2>One rulebook</h2>
-        <p class="prose">Write "never push to main" once. It compiles to each agent's own hook seam —
-          and the coverage report tells you, per rule, per agent, what's truly enforced versus best-effort.
-          Nobody else labels the seams honestly.</p></div>
+        <p class="prose">A rule is JSON: an id, an action and a condition. The actions are deny, ask, allow, observe and
+          redact. A fresh install selects no rules. Opt in to the five starter rules with
+          <span style="font-family:var(--mono)">crossing-guard rules select safety-starter</span>, or point it at your own file.
+          Command matching is best-effort, so keep your branch protection.
+          <a data-claim="home-rules" href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/ruledoc/rules.safety-starter.json">Read the starter rules →</a></p></div>
     </div>
 
     <div class="pillar">
       <div class="txt"><p class="num">03</p><h2>Every agent, one file</h2>
-        <p class="prose">The same rules.json drove a live block on Claude Code, Codex, and OpenCode — three
-          integration styles, one source of truth. Add a runtime by adding a data row, not a rewrite.</p></div>
-      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">rules.json — authored once</span></div>
-        <div class="body"><span class="l c-cy">{</span><span class="l">  <span class="c-yel">"id"</span>: <span class="c-grn">"protect-shared-branch"</span>,</span><span class="l">  <span class="c-yel">"match"</span>: { <span class="c-yel">"capability"</span>: <span class="c-grn">"git.push_protected"</span> },</span><span class="l">  <span class="c-yel">"action"</span>: <span class="c-grn">"ask"</span>,</span><span class="l">  <span class="c-yel">"backstop"</span>: <span class="c-grn">"remote-branch-protection"</span></span><span class="l c-cy">}</span></div>
+        <p class="prose">The same rule document is evaluated for every connected agent, by one evaluator.
+          <span style="font-family:var(--mono)">crossing-guard check</span> shows what a command would get before any agent tries it.
+          <span data-claim="home-check-output">This output is from a build of the published source with the starter rules.</span></p></div>
+      <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">crossing-guard check — dry run</span></div>
+        <div class="body"><span class="l prompt c-w">crossing-guard check "git push --force origin main"</span><span class="l c-yel">ASK      git-force-push   "git push --force origin main"</span><span class="l prompt c-w">crossing-guard check "git status"</span><span class="l c-grn">allow    (no rule matched)   "git status"</span></div>
       </div>
     </div>
   </div></div>
@@ -106,19 +114,23 @@
   <div class="band"><div class="wrap sec">
     <p class="eyebrow">How it works</p>
     <div class="steps">
-      <div class="step"><div class="n">1</div><h3>Install &amp; attach</h3><p style="font-size:14px;margin:2px 0">One command, then <span style="font-family:var(--mono)">crossing attach</span> wires the hooks into each agent you use.</p></div>
-      <div class="step"><div class="n">2</div><h3>Write one rule</h3><p style="font-size:14px;margin:2px 0">Pick from the library or write a capability + action. It compiles to every agent's seam automatically.</p></div>
-      <div class="step"><div class="n">3</div><h3>See the coverage</h3><p style="font-size:14px;margin:2px 0">The report shows what's enforced, best-effort, or unsupported — per agent. No surprises, no bluffing.</p></div>
+      <div class="step"><div class="n">1</div><h3>Build &amp; connect</h3><p style="font-size:14px;margin:2px 0">Build the binary from source. <span style="font-family:var(--mono)">crossing-guard init --dry-run</span> lists every change first, and <span style="font-family:var(--mono)">init</span> then asks per agent before it writes a hook.</p></div>
+      <div class="step"><div class="n">2</div><h3>Pick your rules</h3><p style="font-size:14px;margin:2px 0">Select the starter rules or your own JSON file. Nothing is asked or denied until you do.</p></div>
+      <div class="step"><div class="n">3</div><h3>Watch it work</h3><p style="font-size:14px;margin:2px 0"><span style="font-family:var(--mono)">crossing-guard console</span> opens the local console: Sessions, Memory, Skills and Governance, with approvals waiting for you.</p></div>
     </div>
+    <div class="term" style="margin-top:14px"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="ttl">build from source — Go 1.26 or later, macOS</span></div>
+      <div class="body"><span class="l prompt c-w">git clone https://github.com/crossing-guard/crossing-guard</span><span class="l prompt c-w">cd crossing-guard</span><span class="l prompt c-w">go build -mod=readonly -o bin/crossing-guard ./cmd/crossing-guard</span><span class="l prompt c-w">./bin/crossing-guard init --dry-run</span></div>
+    </div>
+    <p style="margin-top:12px"><a class="btn-ghost" href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/docs/building-source.md">Full build notes on GitHub →</a></p>
   </div></div>
 
 
   <div class="band grassband"><div class="wrap sec">
     <div class="proof">
-      <div class="proofstat"><b>3</b> agents, proven live<br><span class="fine">Claude Code · Codex · OpenCode</span></div>
-      <div class="proofstat"><b>1</b> rule file<br><span class="fine">3 model families, 3 integration styles</span></div>
-      <div class="proofstat"><b>0</b> bytes to a vendor<br><span class="fine">local-first, non-logging fallback</span></div>
-      <div><a class="btn-ghost" href="/compare/">Read the probes →</a></div>
+      <div class="proofstat"><b>4</b> agents connected<br><span class="fine">Claude Code · Codex · OpenCode · Cursor</span></div>
+      <div class="proofstat"><b>1</b> rule document<br><span class="fine">5 actions, one evaluator</span></div>
+      <div class="proofstat"><b>1</b> local daemon<br><span class="fine" data-claim="home-local">loopback address by default, a token on every API call</span></div>
+      <div><a class="btn-ghost" href="https://github.com/crossing-guard/crossing-guard">Read the source →</a></div>
     </div>
     <p class="fine">Proof of work instead of a user count.</p>
   </div></div>
@@ -129,46 +141,48 @@
       <div class="txt">
         <p class="eyebrow">Never get stuck</p>
         <h2>Your usage limit resets in five hours.<br>Your deadline doesn't.</h2>
-        <p class="prose">When one agent hits the wall mid-task, the paddle goes up — and your session,
-          memory, and rules cross to another agent or a local model. Keep working.</p>
+        <p class="prose">When one agent hits the wall mid-task, the next one starts with the same memory and the same
+          rules. The console drafts a handoff note from the stalled session, you edit it, and it is written
+          into the repository for the next agent to read.
+          <a data-claim="home-handoff" href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/daemon/handoff.go">How the handoff is built →</a></p>
         <p style="margin-top:14px"><a class="btn-ghost" href="/limits/">See the limits board →</a></p>
       </div>
-      <div class="panel walled" style="margin:0"><div class="ph">When the meter runs out</div><div class="pb">
+      <div class="panel walled" style="margin:0"><div class="ph">When the meter runs out (example)</div><div class="pb">
         <p style="display:flex;align-items:center;gap:9px;margin:2px 0">
           <svg width="22" height="26" viewBox="0 0 30 34" aria-hidden="true"><rect x="13.6" y="19" width="2.8" height="14" rx="1" fill="#1F2124"/><polygon points="15,1 21.4,3.7 24,10 21.4,16.3 15,19 8.6,16.3 6,10 8.6,3.7" fill="#B01F24" stroke="#fff" stroke-width="1.6"/></svg>
           <span class="v v-stop">At limit</span> <span class="fine">Claude Max · resets 4h 51m</span></p>
         <div class="meter"><i style="width:100%"></i></div>
-        <p style="font-size:14px;margin-top:8px"><b>Cross to Codex →</b> session + memory + rules travel with you.</p>
+        <p style="font-size:14px;margin-top:8px"><b>Continue in Codex →</b> same memory, same rules, plus your handoff note.</p>
       </div></div>
     </div>
   </div></div>
 
 
   <div class="band alt"><div class="wrap sec">
-    <p class="eyebrow">For the team lead who has to answer for it</p>
+    <p class="eyebrow">For whoever has to answer for it</p>
     <h2>Honest governance, not a checkbox</h2>
     <div class="steps" style="margin-top:8px">
-      <div class="step"><h3>Author once, enforce everywhere</h3><p style="font-size:14px">Org policy is a signed, versioned bundle — org &gt; repo &gt; user, tighten-only. Compiles locally; the server just distributes it.</p></div>
-      <div class="step"><h3>Coverage you can audit</h3><p style="font-size:14px">Every rule renders its real enforcement per agent. A security review reads the report, not the marketing.</p></div>
-      <div class="step"><h3>Run it yourself</h3><p style="font-size:14px">Self-host the whole thing.</p></div>
+      <div class="step"><h3>A person in the approval</h3><p style="font-size:14px">An ask rule holds the tool call in a local approvals inbox. If nobody can be reached, the call is denied. <a data-claim="home-ask" href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/guardcli/main.go">Source →</a></p></div>
+      <div class="step"><h3>A record you can check</h3><p style="font-size:14px">Each session's event log carries a sha256 hash chain. <span style="font-family:var(--mono)">crossing-guard chain verify</span> recomputes it. <a data-claim="home-chain" href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/engine/eventchain.go">Source →</a></p></div>
+      <div class="step"><h3>Run it yourself</h3><p style="font-size:14px">One binary and one folder, <span style="font-family:var(--mono)">~/.crossing-guard</span>, on your own machine. <span style="font-family:var(--mono)">uninstall</span> removes the hooks and keeps your data unless you ask it to purge.</p></div>
     </div>
-    <p class="prose" style="font-style:italic;margin-top:14px">We didn't put Open in the name. We put it in the license.</p>
+    <p class="prose" style="font-style:italic;margin-top:14px">We didn't put Open in the name. We put it in the <a href="https://github.com/crossing-guard/crossing-guard/blob/main/LICENSE">license</a>.</p>
   </div></div>
 
 
   <div class="band"><div class="wrap sec">
-    <p class="eyebrow">The Comparison Lab</p>
-    <h2>Choosing between agents? We ran the same task on each.</h2>
-    <p class="sub" style="max-width:60ch">Reproducible head-to-heads — same repo, same rules, same session-carry test — with probe artifacts attached. Updated when the probes re-run.</p>
+    <p class="eyebrow">Side by side</p>
+    <h2>Choosing between agents? We ran the same thing on each.</h2>
+    <p class="sub" style="max-width:60ch">Each tutorial names the versions it ran on and the date it was last verified.</p>
     <div class="tablewrap"><table>
-      <thead><tr><th>Matchup</th><th>Status</th></tr></thead>
+      <thead><tr><th>What we ran</th><th>On</th></tr></thead>
       <tbody>
-        <tr><td><a href="/compare/">Codex vs Claude Code</a></td><td><span class="v v-enf">Probe-backed</span></td></tr>
-        <tr><td><a href="/compare/">OpenCode vs Claude Code</a></td><td><span class="v v-enf">Probe-backed</span></td></tr>
-        <tr><td><a href="/compare/">Gemini CLI vs Claude Code</a></td><td><span class="v v-adv">Registered</span></td></tr>
+        <tr><td><a href="/learn/claude-code-hooks/">Hooks and plugins: what fires, and when</a></td><td>Claude Code · Codex · OpenCode</td></tr>
+        <tr><td><a href="/learn/mcp-config/">One MCP server, and how each agent reports a broken one</a></td><td>Claude Code · Codex · OpenCode</td></tr>
+        <tr><td><a href="/learn/skills-across-vendors/">One skill: where each agent looks, and how to tell it loaded</a></td><td>Claude Code · Codex · OpenCode</td></tr>
       </tbody>
     </table></div>
-    <p><a class="btn-ghost" href="/compare/">See all comparisons →</a></p>
+    <p><a class="btn-ghost" href="/learn/">See all tutorials →</a></p>
   </div></div>
 
 
@@ -177,7 +191,7 @@
     <p class="sub" style="margin:0 auto">See how it hooks into the agents you already use.</p>
     <div class="heroctas">
       <a class="btn" href="/learn/">Read the tutorials</a>
-      <a class="btn-ghost" href="/learn/how-crossing-guard-connects/">How it connects →</a>
+      <a class="btn-ghost" href="https://github.com/crossing-guard/crossing-guard">Get the source →</a>
     </div>
   </div></div>
 </main>
@@ -190,7 +204,7 @@
     <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
     <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
     <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
-    <div class="fc"><h2>Project</h2><ul><li><a href="/#release-status">Project status</a></li><li><a href="/#release-status">Coverage honesty</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="https://github.com/crossing-guard/crossing-guard">Source on GitHub</a></li><li><a href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/docs/building-source.md">Build from source</a></li><li><a href="https://github.com/crossing-guard/crossingguard-site">This website's source</a></li><li><a href="/#release-status">Project status</a></li></ul></div>
   </div>
   <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · Monitor and control native agent sessions. ·
     An open-source project · The roads are private. The crosswalk is public.</div>
