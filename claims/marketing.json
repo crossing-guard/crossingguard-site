@@ -88,6 +88,28 @@
    "review_by": "2026-11-15",
    "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/engine/eventchain.go",
    "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "limits-usage-view",
+   "wording": "The console Usage view aggregates token counts from local session files (input, output, cache hit rate, per agent and per day) and holds no plan limit.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/daemon/static/js/views/usage.js",
+   "owner": "Crossing Guard maintainers"
+  },
+  {
+   "id": "limits-outage-ladder",
+   "wording": "A managed helper, reviewer or follower run whose provider reports a quota, outage or sign-in error is retried on the same route up to three times, moved to the next user-authored route, then parked. A route names a runtime and a model. Verified by tests against a simulated provider.",
+   "evidence_class": "source-verified behavior",
+   "strength": "observed",
+   "versions": "Crossing Guard source c26a2cc8 (2026-09-25)",
+   "verified_on": "2026-10-04",
+   "review_by": "2026-11-15",
+   "evidence_link": "https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/internal/daemon/orchestration_provider_outage.go",
+   "owner": "Crossing Guard maintainers"
   }
  ]
 }
