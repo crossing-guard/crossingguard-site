@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Claude Code vs Codex: the comparison lab (concept) — Crossing Guard</title>
-<meta name="description" content="A comparison lab for AI coding agents: the same task, rule file and session-carry test on Claude Code, Codex and others, each linked to its probe.">
+<title>Claude Code vs Codex vs OpenCode, side by side — Crossing Guard</title>
+<meta name="description" content="Claude Code, Codex and OpenCode side by side: the same hook, MCP server and skill set up on each, and what a Crossing Guard rule can do on each one.">
 <link rel="canonical" href="https://crossingguard.dev/compare/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/site.css">
@@ -34,27 +34,59 @@
 <main id="main">
 <div class="wrap sec">
   <p class="crumb"><a href="/">Home</a> › Compare</p>
-  <h1 style="font-size:28px">Claude Code vs Codex: the comparison lab</h1>
-  <p class="sub" style="max-width:64ch">The lab: the same task, rule file and session-carry test on every agent, each result linked to the probe that produced it. No affiliate links.</p>
-  <p class="concept">The matchups, statuses and figures below are examples. Check each vendor for current plans and limits.</p>
+  <h1 style="font-size:28px">Claude Code vs Codex vs OpenCode, side by side</h1>
+  <p class="sub" style="max-width:64ch">The same hook, MCP server and skill, set up on each agent, and what each one did. Every row comes from a tutorial that names its versions and the date it was run. No affiliate links.</p>
 
   <h2 id="the-matrix" style="margin-top:22px">The matrix</h2>
-  <p class="prose" style="font-size:14.5px">Cells ship only where probes actually run — anything else is one more opinion listicle, and the internet is stocked.</p>
+  <p class="prose" style="font-size:14.5px">Run on 2026-09-25. Each heading links to the tutorial with the commands, versions and what we could not verify.</p>
+
+  <h3 style="margin-top:18px"><a href="/learn/claude-code-hooks/">Hooks and plugins</a></h3>
   <div class="tablewrap"><table>
-    <thead><tr><th>Matchup</th><th>Status</th></tr></thead>
+    <thead><tr><th></th><th>Claude Code</th><th>Codex</th><th>OpenCode</th></tr></thead>
     <tbody>
-      <tr><td><a href="/#release-status">Codex vs Claude Code</a></td><td><span class="v v-enf">Probe-backed</span></td></tr>
-      <tr><td><a href="/#release-status">Claude Code vs Cursor</a></td><td><span class="v v-best">Partial</span></td></tr>
-      <tr><td><a href="/#release-status">OpenCode vs Claude Code</a></td><td><span class="v v-enf">Probe-backed</span></td></tr>
-      <tr><td><a href="/#release-status">Claude Code vs GitHub Copilot</a></td><td><span class="v v-adv">Registered</span></td></tr>
-      <tr><td><a href="/#release-status">Gemini CLI vs Claude Code</a></td><td><span class="v v-adv">Registered</span></td></tr>
-      <tr><td><a href="/#release-status">Codex vs Cursor</a></td><td><span class="v v-adv">Watch list</span></td></tr>
+      <tr><td>Register</td><td>hooks in <span style="font-family:var(--mono)">settings.json</span></td><td><span style="font-family:var(--mono)">hooks.json</span> or <span style="font-family:var(--mono)">[hooks]</span></td><td>plugin file</td></tr>
+      <tr><td>Extra step before it runs</td><td>accept workspace trust</td><td>trust each hook with <span style="font-family:var(--mono)">/hooks</span></td><td>restart</td></tr>
+      <tr><td>Block a tool call</td><td>deny or exit 2</td><td>deny or exit 2 (no ask)</td><td>throw</td></tr>
+      <tr><td>Add context for the model</td><td><span style="font-family:var(--mono)">additionalContext</span>, 10,000 characters</td><td><span style="font-family:var(--mono)">additionalContext</span>, about 2,500 tokens by default</td><td>SDK <span style="font-family:var(--mono)">session.prompt</span> with <span style="font-family:var(--mono)">noReply</span></td></tr>
+      <tr><td>Session record on disk</td><td>JSON lines, one file per session</td><td>JSON lines, one file per session</td><td>a SQLite database</td></tr>
     </tbody>
   </table></div>
-  <h2 style="margin-top:22px">What we measure that nobody else does</h2>
-  <div class="panel"><div class="ph">Probe · rule enforcement at the hook seam</div><div class="pb"><p>Same "never push to main" rule on each runtime's own hooks — who blocks, who asks, who times out open. <span class="v v-enf">Enforced</span> / <span class="v v-best">Best-effort</span> straight from the coverage report.</p></div></div>
-  <div class="panel"><div class="ph">Probe · session carry</div><div class="pb"><p>Kill it mid-task, resume elsewhere. What survives? With our layer: files, memory, and rules do.</p></div></div>
-  <p class="prose" style="font-style:italic">"Yes, even the expensive ones stop."</p>
+
+  <h3 style="margin-top:18px"><a href="/learn/mcp-config/">One MCP server</a></h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Claude Code</th><th>Codex</th><th>OpenCode</th></tr></thead>
+    <tbody>
+      <tr><td>Project file</td><td><span style="font-family:var(--mono)">.mcp.json</span></td><td><span style="font-family:var(--mono)">.codex/config.toml</span>, trusted projects only</td><td><span style="font-family:var(--mono)">opencode.json</span></td></tr>
+      <tr><td>Approval before use</td><td>once per project, except in <span style="font-family:var(--mono)">-p</span></td><td>none in the home config; a project file needs a trusted project</td><td>none</td></tr>
+      <tr><td>Does the list command connect?</td><td>yes, once approved</td><td>no</td><td>yes</td></tr>
+      <tr><td>A broken server in a real session</td><td>exits 0 and the model answers; the only sign is a failed status in the stream-json start-up event</td><td>exits 0 and the model answers; two error lines on standard error</td><td>exits 0 and says nothing about the server</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 style="margin-top:18px"><a href="/learn/skills-across-vendors/">One skill</a></h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Claude Code</th><th>Codex</th><th>OpenCode</th></tr></thead>
+    <tbody>
+      <tr><td>Reads <span style="font-family:var(--mono)">.claude/skills/</span></td><td>yes</td><td>no</td><td>yes</td></tr>
+      <tr><td>Reads <span style="font-family:var(--mono)">.agents/skills/</span></td><td>no</td><td>yes</td><td>yes</td></tr>
+      <tr><td>Reads <span style="font-family:var(--mono)">.opencode/skills/</span></td><td>no</td><td>no</td><td>yes</td></tr>
+      <tr><td>A skill with no description</td><td>still works by name, but was not chosen for a plain prompt</td><td>skipped, with a message on standard error only</td><td>loads only when asked by name</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="rules" style="margin-top:26px">What a Crossing Guard rule can do on each</h2>
+  <p class="prose" style="font-size:14.5px">Read from the framework source. <a data-claim="home-runtimes" href="https://github.com/crossing-guard/crossing-guard/tree/c26a2cc8/internal/guardcli">The installers are here →</a></p>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Claude Code</th><th>Codex</th><th>OpenCode</th><th>Cursor</th></tr></thead>
+    <tbody>
+      <tr><td>Connection</td><td>hook entries in <span style="font-family:var(--mono)">settings.json</span></td><td>hook entries in <span style="font-family:var(--mono)">hooks.json</span></td><td>one plugin file</td><td>hook entries in <span style="font-family:var(--mono)">hooks.json</span></td></tr>
+      <tr><td>Deny a tool call</td><td>yes</td><td>yes, once you trust the hook</td><td>on OpenCode 1.18.0; other versions only record</td><td>yes</td></tr>
+      <tr><td>Hold a call for a person</td><td>yes, for up to 55 seconds</td><td>yes, for up to 55 seconds</td><td>no, the call is denied</td><td>no, the call is denied</td></tr>
+      <tr><td>Shared memory at session start</td><td>yes</td><td>yes</td><td>no</td><td>no</td></tr>
+    </tbody>
+  </table></div>
+  <p class="prose" style="font-size:14.5px">On every agent, a deny rule is evaluated inside the hook, so it still applies when the daemon is not running. When a held call gets no answer, it is denied. <a data-claim="home-ask" href="/learn/how-crossing-guard-connects/#when-things-fail">What happens when something fails →</a></p>
+  <p class="prose" style="font-size:14.5px">The Cursor connection does not cover Cursor CLI, Tab or Cloud Agents.</p>
 </div>
 </main>
 
@@ -64,8 +96,8 @@
   <div class="cols2">
     <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
     <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li></ul></div>
-    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Codex vs Claude Code</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/#release-status">Method &amp; probes</a></li></ul></div>
-    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/">The board</a></li><li><a href="/limits/">Plan math</a></li><li><a href="/limits/">The escape hatch</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Side by side</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/compare/#rules">Rules on each agent</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/#your-meter">Your meter</a></li><li><a href="/limits/#mid-task">Hitting a limit mid-task</a></li><li><a href="/limits/#helper-runs">Helper runs</a></li></ul></div>
     <div class="fc"><h2>Project</h2><ul><li><a href="https://github.com/crossing-guard/crossing-guard">Source on GitHub</a></li><li><a href="https://github.com/crossing-guard/crossing-guard/blob/c26a2cc8/docs/building-source.md">Build from source</a></li><li><a href="https://github.com/crossing-guard/crossingguard-site">This website's source</a></li><li><a href="/#release-status">Project status</a></li></ul></div>
   </div>
   <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · Monitor and control native agent sessions. ·
