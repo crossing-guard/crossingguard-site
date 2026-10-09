@@ -38,53 +38,42 @@
     <p class="crumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › October 2026 source refresh</p>
     <p class="eyebrow">Release notes</p>
     <h1>What changed in the October 2026 source refresh</h1>
-    <p class="lede">On October 7 the public source moved from the September 25 snapshot to upstream revision <span style="font-family:var(--mono)">5607e508</span>. This post lists what is new, how the published tree is now made, what we checked and what we did not.</p>
+    <p class="lede">On October 7 we moved the public source from the September 25 snapshot to upstream revision <span style="font-family:var(--mono)">5607e508</span>. Below is what changed, how we made the published tree, and where our checks stopped.</p>
     <p class="dateline">Published <time datetime="2026-10-09">2026-10-09</time> · Crossing Guard maintainers</p>
   </div></div>
   <div class="wrap post-layout">
     <article class="article post">
       <section>
-        <h2 id="how-the-tree-is-made">How the published tree is made now</h2>
-        <p>The September snapshot was assembled by hand, and it had drifted. Several fixes existed only in the public copy, and code written upstream since then no longer fitted it. Before this refresh we ported those fixes upstream. The public tree is now a direct export of the upstream source folders, plus the publication documents that live only in the public repository.</p>
-        <p>Tests and help text upstream used sample data taken from real work. We replaced it with neutral samples before the export, along with session ids that had been captured from real sessions and comments that cited unpublished design documents.</p>
-        <p>The change arrived as <a href="https://github.com/crossing-guard/crossing-guard/pull/2">one pull request</a>. The <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/refresh-status.md">refresh status page</a> in the repository has the full record.</p>
+        <h2 id="how-the-tree-is-made">Getting the public tree back in step</h2>
+        <p>We had assembled the September snapshot by hand. It had drifted: several fixes lived only in the public copy, and newer upstream code no longer fitted it. Before the refresh, we ported those fixes upstream. For this release, we exported the upstream source folders directly and added the publication documents that live only in the public repository.</p>
+        <p>We also had some cleanup to do before the export. Upstream tests and help text used sample data from real work. We replaced it with neutral samples, along with ids captured from real sessions and comments citing unpublished design documents.</p>
+        <p>All of this arrived in <a href="https://github.com/crossing-guard/crossing-guard/pull/2">one pull request</a>. We kept the full record on the repository's <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/refresh-status.md">refresh status page</a>.</p>
       </section>
       <section>
-        <h2 id="what-is-new">What is new since September</h2>
-        <ul>
-          <li>The database schema is 46. The September snapshot was at 32.</li>
-          <li>Recall tools run over a local MCP server, started with <span style="font-family:var(--mono)">crossing-guard mcp</span> and registered with <span style="font-family:var(--mono)">crossing-guard init --recall</span>.</li>
-          <li>A team server client arrived: <span style="font-family:var(--mono)">crossing-guard link</span>, a sync outbox and memory by scope. A linked device sends records to the team server its user names. The server is a separate project and is not in the repository. An unlinked device sends nothing to a team server.</li>
-          <li>The console gained per-call usage history read from local session files, session boards and model routes.</li>
-          <li>There is an Antigravity transcript reader, and Antigravity CLI chat through the same provider contract as the other agents.</li>
-          <li>The safety-starter rulebook has six rules. The new one is <span style="font-family:var(--mono)">team-link-change</span>, which asks before a device is linked to a team server.</li>
-          <li>The lookup for an agent's executable has one home, in <span style="font-family:var(--mono)">internal/guardcli</span>.</li>
-        </ul>
+        <h2 id="what-is-new">What changed since September</h2>
+        <p>The database schema went from 32 in the September snapshot to 46. We also gave the lookup for an agent's executable one home, in <span style="font-family:var(--mono)">internal/guardcli</span>.</p>
+        <p>In this refresh, recall tools ran over a local MCP server, started with <span style="font-family:var(--mono)">crossing-guard mcp</span> and registered with <span style="font-family:var(--mono)">crossing-guard init --recall</span>. The console gained per-call usage history read from local session files, session boards and model routes. We added an Antigravity transcript reader and Antigravity CLI chat through the same provider contract as the other agents.</p>
+        <p>The team server client arrived too, with <span style="font-family:var(--mono)">crossing-guard link</span>, a sync outbox and memory by scope. As shipped in this refresh, a linked device sent records to the team server named by its user; an unlinked device sent nothing to a team server. The server itself was a separate project and was not included in the repository.</p>
+        <p>The safety-starter rulebook reached six rules. The new rule, <span style="font-family:var(--mono)">team-link-change</span>, asked before a device was linked to a team server.</p>
       </section>
       <section>
-        <h2 id="upgrading">Upgrading from the September build</h2>
-        <p>We seeded a store with the published September build: one rulebook selection, four observed tool calls, a session state and a checkpoint. The refreshed build opened it and migrated it from schema 32 to 46 with every seeded row kept. <span style="font-family:var(--mono)">crossing-guard export</span> then wrote a schema-46 snapshot.</p>
-        <p>The September build refused to open the upgraded store. An older build is not a way back, so keep a copy of your data folder before you upgrade. The copy we kept stayed readable at schema 32. <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/data-and-recovery.md">Data, export and recovery</a> has the details.</p>
-        <p>This was one small store on a scratch home. It does not cover every older dataset.</p>
+        <h2 id="upgrading">Trying the upgrade from September</h2>
+        <p>We seeded a store with the published September build: one rulebook selection, four observed tool calls, a session state and a checkpoint. Then we opened it with the refreshed build. It migrated the store from schema 32 to 46 and kept every seeded row. Running <span style="font-family:var(--mono)">crossing-guard export</span> wrote a schema-46 snapshot.</p>
+        <p>When we tried opening the upgraded store with the September build, it refused. Going back to an older build won't get you back into that store, so keep a copy of your data folder before you upgrade. Ours stayed readable at schema 32. The <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/data-and-recovery.md">Data, export and recovery</a> document has the details.</p>
+        <p>We tried this with one small store on a scratch home. This did not cover every older dataset.</p>
       </section>
       <section>
-        <h2 id="what-we-checked">What we checked</h2>
-        <ul>
-          <li>The hosted quality gate passed on the pull request and again on <span style="font-family:var(--mono)">main</span> after the merge. It runs formatting, vet, the static checks, the browser test suites, the lints and the race tests.</li>
-          <li>The application and both analyzers build from a clean checkout.</li>
-          <li>A daemon started with a fresh home and no hooks installed answered <span style="font-family:var(--mono)">doctor</span>, <span style="font-family:var(--mono)">init --dry-run</span>, <span style="font-family:var(--mono)">check</span> and <span style="font-family:var(--mono)">coverage</span>. Over HTTP it returned 200 with its token and 401 without one or with a wrong one.</li>
-          <li>In a browser, Sessions and Governance loaded, Governance showed the seeded session and its four events, a wrong key produced the not-connected screen, and the right key recovered.</li>
-        </ul>
+        <h2 id="what-we-checked">The checks we ran</h2>
+        <p>The hosted quality gate passed on the pull request, then again on <span style="font-family:var(--mono)">main</span> after the merge. It ran formatting, vet, the static checks, the browser test suites, the lints and the race tests. We also built the application and both analyzers from a clean checkout.</p>
+        <p>We started a daemon with a fresh home and no hooks installed. It answered <span style="font-family:var(--mono)">doctor</span>, <span style="font-family:var(--mono)">init --dry-run</span>, <span style="font-family:var(--mono)">check</span> and <span style="font-family:var(--mono)">coverage</span>. Over HTTP, we got 200 with its token and 401 with no token or a wrong one.</p>
+        <p>In the browser, Sessions and Governance loaded. Governance showed the seeded session and its four events. We tried a wrong key and got the not-connected screen; supplying the right key recovered the connection.</p>
       </section>
       <section>
-        <h2 id="what-we-did-not-check">What we did not check</h2>
-        <ul>
-          <li>A full installed journey on a clean macOS account: install, use with a real agent, recovery and uninstall. The checks above ran on disposable data.</li>
-          <li>A scan with a dedicated secret scanner. We ran our own scans for private names, sample data and captured session ids. GitHub push protection stayed on.</li>
-          <li>Linux and Windows. macOS is the only platform we run it on.</li>
-        </ul>
-        <p>One sentence in the product is behind the change: <span style="font-family:var(--mono)">crossing-guard init</span> still prints "nothing leaves this machine" beside the data folder. That holds for an unlinked device and has not been reworded for a linked one.</p>
-        <p>This is still a source release. There is no binary download. <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/building-source.md">Building the source</a> lists what you need.</p>
+        <h2 id="what-we-did-not-check">Where we stopped</h2>
+        <p>We did not run a full installed journey on a clean macOS account: install, use with a real agent, recovery and uninstall. The checks above used disposable data. We did not check Linux or Windows either. macOS was the only platform we ran it on.</p>
+        <p>We ran our own scans for private names, sample data and captured session ids, with GitHub push protection still on. We did not run a dedicated secret scanner.</p>
+        <p>One bit of wording had not caught up with the change. In this refresh, <span style="font-family:var(--mono)">crossing-guard init</span> still printed "nothing leaves this machine" beside the data folder. That held for an unlinked device, but we had not reworded it for a linked one.</p>
+        <p>We shipped source. There was still no binary download; <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/building-source.md">Building the source</a> lists what you need.</p>
       </section>
       <nav class="series" aria-label="Posts">
         <a class="prev" href="/blog/"><small>Back to</small>All posts</a>
