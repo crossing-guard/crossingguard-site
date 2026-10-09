@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found — Crossing Guard</title>
+<title>Post template — Crossing Guard</title>
 <meta name="robots" content="noindex">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TITLE","description":"DESCRIPTION","datePublished":"YYYY-MM-DD","dateModified":"YYYY-MM-DD","mainEntityOfPage":"https://crossingguard.dev/blog/SLUG/","author":{"@type":"Organization","name":"Crossing Guard"}}</script>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="alternate" type="application/atom+xml" title="Crossing Guard blog" href="/blog/feed.xml">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -31,18 +33,30 @@
 <!-- /site-header -->
 
 <main id="main">
-  <div class="band alt"><div class="wrap sec">
-    <p class="eyebrow">404 · not found</p>
-    <h1>There's no crossing here.</h1>
-    <p class="sub">The page you asked for doesn't exist, or it moved when this site grew real pages.</p>
-    <div class="heroctas">
-      <a class="btn" href="/">Home</a>
-      <a class="btn-ghost" href="/learn/">Tutorials →</a>
-      <a class="btn-ghost" href="/agents/">Agents →</a>
-    </div>
+  <!-- Copy this file to site/blog/<slug>/index.html. Replace every CAPITALISED placeholder,
+       remove the robots noindex meta, add a canonical link and a meta description, and set
+       the dates in the dateline and the JSON-LD. Then add the post to site/blog/index.html,
+       site/blog/feed.xml and site/sitemap.xml, and run: node scripts/check-site.mjs
+       The kind is one of: Release notes, Field notes, Explainer. See TUTORIALS.md "Blog posts". -->
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › SHORT TITLE</p>
+    <p class="eyebrow">Release notes</p>
+    <h1>TITLE THAT SAYS WHAT HAPPENED</h1>
+    <p class="lede">ONE OR TWO PLAIN SENTENCES: WHAT HAPPENED AND WHY A READER WOULD CARE.</p>
+    <p class="dateline">Published <time datetime="YYYY-MM-DD">YYYY-MM-DD</time> · Crossing Guard maintainers</p>
   </div></div>
+  <div class="wrap post-layout">
+    <article class="article post">
+      <section>
+        <h2 id="first-section">FIRST SECTION</h2>
+        <p>WHAT HAPPENED, IN THE PAST TENSE. LINK THE SOURCE FILE, PULL REQUEST OR TUTORIAL BEHIND EACH FACT.</p>
+      </section>
+      <nav class="series" aria-label="Posts">
+        <a class="prev" href="/blog/"><small>Back to</small>All posts</a>
+      </nav>
+    </article>
+  </div>
 </main>
-
 <div class="crosswalk" aria-hidden="true"></div>
 <!-- site-footer -->
 <footer>

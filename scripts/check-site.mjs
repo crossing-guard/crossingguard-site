@@ -59,9 +59,14 @@ const template = existsSync(join(ROOT, cfg.template))
   ? { where: cfg.template, rel: null, url: null, html: readFileSync(join(ROOT, cfg.template), 'utf8'), noindex: true, template: true }
   : null;
 if (!template) fail(cfg.template, 'missing tutorial template');
-const all = template ? [...pages, template] : pages;
+const postTemplate = cfg.post_template && existsSync(join(ROOT, cfg.post_template))
+  ? { where: cfg.post_template, rel: null, url: null, html: readFileSync(join(ROOT, cfg.post_template), 'utf8'), noindex: true, postTemplate: true }
+  : null;
+if (cfg.post_template && !postTemplate) fail(cfg.post_template, 'missing post template');
+const all = [...pages, ...(template ? [template] : []), ...(postTemplate ? [postTemplate] : [])];
 const byRel = new Map(pages.map((p) => [p.rel, p]));
 const isArticle = (p) => p.template || /^\/learn\/[^/]+\/$/.test(p.url || '');
+const isPost = (p) => p.postTemplate || /^\/blog\/[^/]+\/$/.test(p.url || '');
 const slugOf = (p) => (p.rel ? (p.rel.match(/^learn\/([^/]+)\/index\.html$/) || [])[1] : null);
 
 // ---------------------------------------------------------------- HTML helpers (quote-aware)
@@ -138,7 +143,7 @@ for (const p of all) {
     if (strip(footer) !== ref.footer) fail(p.where, `footer differs from ${ref.from} — copy the block exactly`);
   }
   const current = tagsIn(header).filter((t) => t.name === 'a' && t.attrs['aria-current']).map((t) => [t.attrs.href, t.attrs['aria-current']]);
-  const want = expectedNav(p.url);
+  const want = p.postTemplate ? null : expectedNav(p.url); // the blog has no header entry
   const got = current.map((c) => c.join(' ')).join(', ');
   if (want === null && current.length) fail(p.where, `no nav link may be marked current here; found ${got}`);
   if (want !== null && (current.length !== 1 || current[0][0] !== want[0] || current[0][1] !== want[1])) {
@@ -168,7 +173,7 @@ for (const p of all) {
   const canon = links.find((l) => l.attrs.rel === 'canonical');
   const robots = meta(h, 'robots');
   if (p.noindex) {
-    if (robots !== 'noindex' && !p.template) fail(p.where, 'noindex page must carry <meta name="robots" content="noindex">');
+    if (robots !== 'noindex' && !p.template && !p.postTemplate) fail(p.where, 'noindex page must carry <meta name="robots" content="noindex">');
     if (canon) fail(p.where, 'noindex page must not declare a canonical URL');
   } else {
     indexable.push(p.url);
@@ -354,9 +359,83 @@ for (const p of all.filter(isArticle)) {
   articleDates.set(p.url, verified);
 }
 
+// ---------------------------------------------------------------- 5b. blog posts, index and feed
+// A post is dated and is never re-verified. So it needs a dateline, may not borrow a
+// tutorial's verified-on panel or evidence badges, and the index, the feed and the sitemap
+// must each agree with the post pages about title, date and order.
+const unescapeXml = (t) => t.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, '&');
+const plain = (html) => unescapeXml(textOf(html)).replace(/\s+/g, ' ').trim();
+const posts = [];
+for (const p of all.filter(isPost)) {
+  const h = p.html;
+  for (const [what, re] of [
+    ['breadcrumb', /<p class="crumb"><a href="\/">Home<\/a> › <a href="\/blog\/">Blog<\/a> › /],
+    ['lede', /<p class="lede">/], ['dateline', /<p class="dateline">/], ['<article class="article post">', /<article class="article post">/],
+    ['post navigation', /<nav class="series" aria-label="Posts">/],
+    ['feed link', /<link rel="alternate" type="application\/atom\+xml" title="[^"]+" href="\/blog\/feed\.xml">/],
+  ]) if (!re.test(h)) fail(p.where, `post is missing its ${what}`);
+  const kind = (h.match(/<p class="eyebrow">([^<]*)<\/p>/) || [])[1];
+  if (!cfg.post_kinds.includes(kind)) fail(p.where, `post kind must be one of: ${cfg.post_kinds.join(', ')}`);
+  if (/<aside class="verified"/.test(h) || badgesIn(h).length || tagsIn(h).some((t) => t.attrs['data-claim'])) {
+    fail(p.where, 'a post carries no verified-on panel, evidence badge or claim reference — put the fact in a tutorial and link it');
+  }
+  if (p.postTemplate) continue; // placeholder dates
+  const line = between(h, '<p class="dateline">', '</p>') || '';
+  const published = (line.match(/Published <time datetime="([^"]*)">([^<]*)<\/time>/) || []);
+  const updated = (line.match(/Updated <time datetime="([^"]*)">([^<]*)<\/time>/) || []);
+  if (!isoDate(published[1]) || published[1] !== published[2]) fail(p.where, 'dateline must read Published <time datetime="YYYY-MM-DD">YYYY-MM-DD</time>');
+  if (isoDate(published[1]) && published[1] > TODAY) fail(p.where, 'published date is in the future');
+  if (updated.length && (!isoDate(updated[1]) || updated[1] !== updated[2] || updated[1] < published[1] || updated[1] > TODAY)) {
+    fail(p.where, 'Updated date must be a real date, not before Published and not in the future');
+  }
+  const modified = updated[1] || published[1];
+  const title = plain((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1] || '');
+  const ld = (h.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/) || [])[1];
+  try {
+    const data = JSON.parse(ld);
+    if (data['@type'] !== 'BlogPosting') fail(p.where, 'JSON-LD @type must be BlogPosting');
+    if (data.datePublished !== published[1]) fail(p.where, 'JSON-LD datePublished must equal the Published date');
+    if (data.dateModified !== modified) fail(p.where, 'JSON-LD dateModified must equal the Updated date, or Published if never edited');
+    if (data.mainEntityOfPage !== cfg.origin + p.url) fail(p.where, 'JSON-LD mainEntityOfPage must equal the canonical URL');
+    if (data.headline !== title) fail(p.where, 'JSON-LD headline must equal the <h1>');
+  } catch { fail(p.where, 'missing or invalid JSON-LD BlogPosting'); }
+  const sm = sitemapEntries.find((e) => e.loc === cfg.origin + p.url);
+  if (sm && sm.lastmod !== modified) fail('site/sitemap.xml', `lastmod for ${p.url} must equal its last dateline date ${modified}`);
+  posts.push({ url: p.url, title, published: published[1], modified, where: p.where });
+}
+posts.sort((a, b) => (a.published < b.published ? 1 : a.published > b.published ? -1 : a.url < b.url ? -1 : 1)); // newest first
+const blogIndex = byRel.get('blog/index.html');
+if (posts.length && !blogIndex) fail('site/blog/index.html', 'missing, but posts exist');
+if (blogIndex) {
+  const items = [...blogIndex.html.matchAll(/<li class="post-item">([\s\S]*?)<\/li>/g)].map((m) => {
+    const link = tagsIn(m[1]).find((t) => t.name === 'a');
+    return { url: link?.attrs.href, title: plain((m[1].match(/<a [^>]*>([\s\S]*?)<\/a>/) || [])[1] || ''), date: (m[1].match(/<time datetime="([^"]*)">/) || [])[1] };
+  });
+  const want = posts.map((x) => `${x.published} ${x.url} ${x.title}`), have = items.map((x) => `${x.date} ${x.url} ${x.title}`);
+  if (JSON.stringify(want) !== JSON.stringify(have)) fail(blogIndex.where, `blog index must list every post, newest first, with its title and Published date\n      want: ${want.join(' | ')}\n      have: ${have.join(' | ')}`);
+  if (!/<link rel="alternate" type="application\/atom\+xml" title="[^"]+" href="\/blog\/feed\.xml">/.test(blogIndex.html)) fail(blogIndex.where, 'blog index must link the feed');
+}
+const feed = readSite('blog/feed.xml');
+if (posts.length && !feed) fail('site/blog/feed.xml', 'missing, but posts exist');
+if (feed) {
+  const tag = (xml, name) => (xml.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`)) || [])[1];
+  if (!feed.includes(`<link rel="self" type="application/atom+xml" href="${cfg.origin}/blog/feed.xml"/>`)) fail('site/blog/feed.xml', 'feed must carry its own rel="self" link');
+  const entries = [...feed.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].map((m) => ({
+    id: tag(m[1], 'id'), href: (m[1].match(/<link rel="alternate" type="text\/html" href="([^"]*)"\/>/) || [])[1],
+    title: unescapeXml(tag(m[1], 'title') || ''), published: tag(m[1], 'published'), updated: tag(m[1], 'updated'),
+  }));
+  const want = posts.map((x) => `${cfg.origin}${x.url} ${x.title} ${x.published}T00:00:00Z ${x.modified}T00:00:00Z`);
+  const have = entries.map((e) => `${e.id} ${e.title} ${e.published} ${e.updated}`);
+  if (JSON.stringify(want) !== JSON.stringify(have)) fail('site/blog/feed.xml', `feed entries must match the posts, newest first\n      want: ${want.join(' | ')}\n      have: ${have.join(' | ')}`);
+  for (const e of entries) if (e.href !== e.id) fail('site/blog/feed.xml', `entry link must equal its id: ${e.id}`);
+  const newest = posts.map((x) => x.modified).sort().at(-1);
+  const head = feed.slice(0, feed.indexOf('<entry>') < 0 ? feed.length : feed.indexOf('<entry>'));
+  if (newest && tag(head, 'updated') !== `${newest}T00:00:00Z`) fail('site/blog/feed.xml', `feed <updated> must be ${newest}T00:00:00Z, the newest post date`);
+}
+
 // Product claims on marketing pages are backed by claims/marketing.json.
 const marketing = loadClaims('claims/marketing.json');
-const marketingRefs = pages.filter((p) => !isArticle(p)).flatMap((p) => tagsIn(p.html).filter((t) => t.attrs['data-claim'])
+const marketingRefs = pages.filter((p) => !isArticle(p) && !isPost(p)).flatMap((p) => tagsIn(p.html).filter((t) => t.attrs['data-claim'])
   .map((t) => ({ p, claim: t.attrs['data-claim'], kind: classes(t).find((c) => c.startsWith('ev-')) })));
 if (marketingRefs.length && !marketing) fail('claims/marketing.json', 'missing, but marketing pages reference claims');
 if (marketing) {
@@ -458,4 +537,4 @@ if (failures.length) {
   for (const f of failures) console.error('  ' + f);
   process.exit(1);
 }
-console.log(`check-site: PASS — ${pages.length} pages (${indexable.length} indexed) + template, ${repoFiles.length} files, freshness=${FRESHNESS}, today ${TODAY}`);
+console.log(`check-site: PASS — ${pages.length} pages (${indexable.length} indexed, ${posts.length} posts) + templates, ${repoFiles.length} files, freshness=${FRESHNESS}, today ${TODAY}`);
