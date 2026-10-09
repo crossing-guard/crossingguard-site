@@ -169,3 +169,41 @@ node scripts/check-site.test.mjs
 
 Then preview the page with `node scripts/serve.mjs`, and check it at phone width, with the
 keyboard alone, and with `--no-js`.
+
+## Blog posts
+
+Posts live at `site/blog/<slug>/index.html`. A tutorial is kept current: it has a review date
+and the check fails when that date passes. A post is dated and is never re-verified. Use a
+post for something that happened once: a release, a measurement, an incident.
+
+Copy `templates/post.html` and keep these parts in this order:
+
+1. A breadcrumb (`Home › Blog › <short title>`), the kind, an `<h1>` and a lede. The kind is
+   `Release notes`, `Field notes` or `Explainer`.
+2. The dateline: `Published` with the date, then `Updated` with a date if the post was edited
+   after it went out, then the byline.
+3. The article, in sections with an `<h2 id>` each.
+4. The post navigation.
+
+The rules for a post:
+
+- Write what happened in the past tense. What a release contains can be in the present tense,
+  because the dateline dates it. A sentence about how a vendor's product behaves says "as of"
+  the publish date or links to the tutorial that checked it.
+- Write from a real run, a real change or a real incident. No predicted outcomes.
+- Link the source file, pull request or tutorial behind each fact about Crossing Guard. Link
+  the vendor page behind each fact about a vendor.
+- A post carries no verified-on panel and no evidence labels. If a fact needs a label, it
+  belongs in a tutorial.
+- When you edit a published post, add the Updated date and one line at the foot saying what
+  changed.
+- The voice rules above apply.
+
+In `<head>`: remove the template's robots `noindex` meta, add a `meta description` and a
+canonical link, and set the JSON-LD `headline`, `datePublished` and `dateModified`. Keep the
+feed link.
+
+Then add the post to `site/blog/index.html` (newest first), to `site/blog/feed.xml` (newest
+first, and move the feed's own `updated` date), and to `site/sitemap.xml` with a `lastmod`
+equal to the last date in the dateline. The check compares all four.
+

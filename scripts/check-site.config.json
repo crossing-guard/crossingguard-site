@@ -2,6 +2,12 @@
   "origin": "https://crossingguard.dev",
   "site_dir": "site",
   "template": "templates/tutorial.html",
+  "post_template": "templates/post.html",
+  "post_kinds": [
+    "Release notes",
+    "Field notes",
+    "Explainer"
+  ],
   "stylesheet": "/assets/site.css",
   "favicon": "/assets/favicon.svg",
   "nav": [
@@ -112,7 +118,7 @@
     {
       "pattern": "(?<![\\w-])cg(?![\\w:])",
       "flags": "i",
-      "why": "short product name — spell it crossing-guard"
+      "why": "short product name \u2014 spell it crossing-guard"
     }
   ],
   "public_safety_skip": [
@@ -257,6 +263,7 @@
   ],
   "voice_scope": [
     "site/learn/",
+    "site/blog/",
     "site/styleguide/",
     "templates/"
   ],
@@ -265,7 +272,7 @@
   ],
   "voice_rules": [
     {
-      "pattern": "—|(?<!\\d)–|–(?!\\d)|\\s--\\s",
+      "pattern": "\u2014|(?<!\\d)\u2013|\u2013(?!\\d)|\\s--\\s",
       "why": "dash in prose (use a period, comma, colon or parentheses; an en dash is allowed between digits)"
     },
     {

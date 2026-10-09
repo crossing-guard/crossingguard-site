@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What changed in the October 2026 source refresh — Crossing Guard</title>
+<meta name="description" content="The public Crossing Guard source moved from the September snapshot to a direct export of upstream. What is new, what we checked and what we did not.">
+<link rel="canonical" href="https://crossingguard.dev/blog/october-2026-source-refresh/">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "What changed in the October 2026 source refresh", "description": "The public Crossing Guard source moved from the September snapshot to a direct export of upstream. What is new, what we checked and what we did not.", "datePublished": "2026-10-09", "dateModified": "2026-10-09", "mainEntityOfPage": "https://crossingguard.dev/blog/october-2026-source-refresh/", "author": {"@type": "Organization", "name": "Crossing Guard"}}</script>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="alternate" type="application/atom+xml" title="Crossing Guard blog" href="/blog/feed.xml">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!-- site-header -->
+<header class="mainnav"><div class="wrap">
+  <a class="logo" href="/">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M21.07 5.12 A12 12 0 1 0 26.88 10.93" fill="none" stroke="#26262E" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="24.49" cy="7.51" r="2.8" fill="#5F6B0A"/>
+    </svg>
+    <span><b>Crossing Guard</b><small>An open source control layer for AI coding agents</small></span>
+  </a>
+  <nav class="tabs" aria-label="Primary">
+    <a href="/">Home</a>
+    <a href="/agents/">Agents</a>
+    <a href="/compare/">Compare</a>
+    <a href="/limits/">Limits</a>
+    <a href="https://github.com/crossing-guard/crossing-guard">GitHub</a>
+    <a class="cta" href="/learn/">Learn</a>
+  </nav>
+</div></header>
+<!-- /site-header -->
+
+<main id="main">
+  <div class="band alt"><div class="wrap sec article-head">
+    <p class="crumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › October 2026 source refresh</p>
+    <p class="eyebrow">Release notes</p>
+    <h1>What changed in the October 2026 source refresh</h1>
+    <p class="lede">On October 7 we moved the public source from the September 25 snapshot to upstream revision <span style="font-family:var(--mono)">5607e508</span>. Below is what changed, how we made the published tree, and where our checks stopped.</p>
+    <p class="dateline">Published <time datetime="2026-10-09">2026-10-09</time> · Crossing Guard maintainers</p>
+  </div></div>
+  <div class="wrap post-layout">
+    <article class="article post">
+      <section>
+        <h2 id="how-the-tree-is-made">Getting the public tree back in step</h2>
+        <p>We had assembled the September snapshot by hand. It had drifted: several fixes lived only in the public copy, and newer upstream code no longer fitted it. Before the refresh, we ported those fixes upstream. For this release, we exported the upstream source folders directly and added the publication documents that live only in the public repository.</p>
+        <p>We also had some cleanup to do before the export. Upstream tests and help text used sample data from real work. We replaced it with neutral samples, along with ids captured from real sessions and comments citing unpublished design documents.</p>
+        <p>All of this arrived in <a href="https://github.com/crossing-guard/crossing-guard/pull/2">one pull request</a>. We kept the full record on the repository's <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/refresh-status.md">refresh status page</a>.</p>
+      </section>
+      <section>
+        <h2 id="what-is-new">What changed since September</h2>
+        <p>The database schema went from 32 in the September snapshot to 46. We also gave the lookup for an agent's executable one home, in <span style="font-family:var(--mono)">internal/guardcli</span>.</p>
+        <p>Recall tools now run over a local MCP server, started with <span style="font-family:var(--mono)">crossing-guard mcp</span> and registered with <span style="font-family:var(--mono)">crossing-guard init --recall</span>. The console gained per-call usage history read from local session files, session boards and model routes. We added an Antigravity transcript reader and Antigravity CLI chat through the same provider contract as the other agents.</p>
+        <p>The team server client arrived too, with <span style="font-family:var(--mono)">crossing-guard link</span>, a sync outbox and memory by scope. A linked device sends records to the team server named by its user; an unlinked device sends nothing to a team server. The server itself is a separate project and is not in the repository.</p>
+        <p>The safety-starter rulebook now has six rules. The new rule, <span style="font-family:var(--mono)">team-link-change</span>, asks before a device is linked to a team server.</p>
+      </section>
+      <section>
+        <h2 id="upgrading">Trying the upgrade from September</h2>
+        <p>We seeded a store with the published September build: one rulebook selection, four observed tool calls, a session state and a checkpoint. Then we opened it with the refreshed build. It migrated the store from schema 32 to 46 and kept every seeded row. Running <span style="font-family:var(--mono)">crossing-guard export</span> wrote a schema-46 snapshot.</p>
+        <p>When we tried opening the upgraded store with the September build, it refused. Going back to an older build won't get you back into that store, so keep a copy of your data folder before you upgrade. Ours stayed readable at schema 32. The <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/data-and-recovery.md">Data, export and recovery</a> document has the details.</p>
+        <p>We tried this with one small store on a scratch home. This did not cover every older dataset.</p>
+      </section>
+      <section>
+        <h2 id="what-we-checked">The checks we ran</h2>
+        <p>The hosted quality gate passed on the pull request, then again on <span style="font-family:var(--mono)">main</span> after the merge. It ran formatting, vet, the static checks, the browser test suites, the lints and the race tests. We also built the application and both analyzers from a clean checkout.</p>
+        <p>We started a daemon with a fresh home and no hooks installed. It answered <span style="font-family:var(--mono)">doctor</span>, <span style="font-family:var(--mono)">init --dry-run</span>, <span style="font-family:var(--mono)">check</span> and <span style="font-family:var(--mono)">coverage</span>. Over HTTP, we got 200 with its token and 401 with no token or a wrong one.</p>
+        <p>In the browser, Sessions and Governance loaded. Governance showed the seeded session and its four events. We tried a wrong key and got the not-connected screen; supplying the right key recovered the connection.</p>
+      </section>
+      <section>
+        <h2 id="what-we-did-not-check">Where we stopped</h2>
+        <p>We did not run a full installed journey on a clean macOS account: install, use with a real agent, recovery and uninstall. The checks above used disposable data. We did not check Linux or Windows either. macOS was the only platform we ran it on.</p>
+        <p>We ran our own scans for private names, sample data and captured session ids, with GitHub push protection still on. We did not run a dedicated secret scanner.</p>
+        <p>One bit of wording has not caught up with the change. <span style="font-family:var(--mono)">crossing-guard init</span> still prints "nothing leaves this machine" beside the data folder. That holds for an unlinked device, but we have not reworded it for a linked one.</p>
+        <p>We shipped source. There is still no binary download; <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/building-source.md">Building the source</a> lists what you need.</p>
+      </section>
+      <nav class="series" aria-label="Posts">
+        <a class="prev" href="/blog/"><small>Back to</small>All posts</a>
+      </nav>
+    </article>
+  </div>
+</main>
+<div class="crosswalk" aria-hidden="true"></div>
+<!-- site-footer -->
+<footer>
+  <div class="cols2">
+    <div class="fc"><h2>Agents</h2><ul><li><a href="/agents/">Your supporting cast</a></li><li><a href="/agents/#spontaneous-memory">Spontaneous Memory</a></li></ul></div>
+    <div class="fc"><h2>Learn</h2><ul><li><a href="/learn/claude-code-hooks/">Hooks across runtimes</a></li><li><a href="/learn/spontaneous-memory/">Spontaneous Memory</a></li><li><a href="/learn/">All tutorials</a></li><li><a href="/blog/">Blog</a></li></ul></div>
+    <div class="fc"><h2>Compare</h2><ul><li><a href="/compare/">Side by side</a></li><li><a href="/compare/#the-matrix">The matrix</a></li><li><a href="/compare/#rules">Rules on each agent</a></li></ul></div>
+    <div class="fc"><h2>Limits</h2><ul><li><a href="/limits/#your-meter">Your meter</a></li><li><a href="/limits/#mid-task">Hitting a limit mid-task</a></li><li><a href="/limits/#helper-runs">Helper runs</a></li></ul></div>
+    <div class="fc"><h2>Project</h2><ul><li><a href="https://github.com/crossing-guard/crossing-guard">Source on GitHub</a></li><li><a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/building-source.md">Build from source</a></li><li><a href="https://github.com/crossing-guard/crossingguard-site">This website's source</a></li><li><a href="/#release-status">Project status</a></li></ul></div>
+  </div>
+  <div class="legal"><b>Crossing Guard</b> — your LLMs need a crossing guard. · Monitor and control native agent sessions. ·
+    An open-source project · The roads are private. The crosswalk is public.</div>
+</footer>
+<!-- /site-footer -->
+</body>
+</html>

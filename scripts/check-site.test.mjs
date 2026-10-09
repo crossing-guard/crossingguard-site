@@ -16,6 +16,9 @@ import { spawnSync, execFileSync } from 'node:child_process';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const T1 = 'site/learn/claude-code-hooks/index.html';
+const P1 = 'site/blog/october-2026-source-refresh/index.html';
+const BLOG = 'site/blog/index.html';
+const FEED = 'site/blog/feed.xml';
 
 const edit = (file, from, to) => (dir) => {
   const path = join(dir, file);
@@ -28,6 +31,11 @@ const append = (file, text) => (dir) => writeFileSync(join(dir, file), readFileS
 const put = (file, text) => (dir) => { mkdirSync(dirname(join(dir, file)), { recursive: true }); writeFileSync(join(dir, file), text); };
 const inMain = (file, html) => edit(file, '</main>', `${html}</main>`);
 const inArticle = (html) => edit(T1, '</article>', `${html}</article>`);
+const inPost = (html) => edit(P1, '</article>', `${html}</article>`);
+// A post edited after publication: every place that states its last date moves together.
+const editedPost = (dir) => {
+  edit(P1, '</time> · Crossing Guard maintainers', '</time> · Updated <time datetime="2026-10-09">2026-10-09</time> · Crossing Guard maintainers')(dir);
+};
 const record = (over = {}) => ({ id: 'fx-1', wording: 'Fixture claim.', evidence_class: 'source-verified behavior', strength: 'observed',
   versions: 'fixture 1.0', verified_on: '2026-09-25', review_by: '2026-10-25', owner: 'Crossing Guard maintainers',
   evidence_private_reason: 'Fixture.', ...over });
@@ -99,6 +107,29 @@ const CASES = [
   ['future verified_on', claimFixture([record({ verified_on: '2030-01-01', review_by: '2030-01-30' })]), 'not in the future'],
   ['far review_by', claimFixture([record({ review_by: '2028-09-25' })]), 'at most 45 days'],
   ['marketing claim without record', both(put('claims/marketing.json', JSON.stringify({ claims: [record({ id: 'mk-1' })] })), inMain('site/index.html', '<span data-claim="mk-1">x</span><span data-claim="mk-nope">y</span>')), 'no record in claims/marketing.json'],
+  // 5b. blog
+  ['post without dateline', edit(P1, '<p class="dateline">', '<p class="date">'), 'post is missing its dateline'],
+  ['post without feed link', edit(P1, /<link rel="alternate"[^>]*>\n/, ''), 'post is missing its feed link'],
+  ['unknown post kind', edit(P1, '<p class="eyebrow">Release notes</p>', '<p class="eyebrow">Opinion</p>'), 'post kind must be one of'],
+  ['post published in the future', null, 'published date is in the future', { CHECK_TODAY: '2026-10-01' }],
+  ['dateline text differs from datetime', edit(P1, '">2026-10-09</time>', '">9 October</time>'), 'dateline must read'],
+  ['Updated before Published', edit(P1, '</time> · Crossing Guard maintainers', '</time> · Updated <time datetime="2026-01-01">2026-01-01</time> · Crossing Guard maintainers'), 'Updated date must be'],
+  ['badge in a post', inPost('<p>A fact. <span class="ev ev-vendor">Vendor docs</span></p>'), 'a post carries no'],
+  ['post JSON-LD type', edit(P1, '"@type": "BlogPosting"', '"@type": "Article"'), 'JSON-LD @type must be BlogPosting'],
+  ['post JSON-LD date drift', edit(P1, '"datePublished": "2026-10-09"', '"datePublished": "2026-10-08"'), 'datePublished must equal'],
+  ['post JSON-LD headline drift', edit(P1, '"headline": "What changed', '"headline": "What moved'), 'headline must equal'],
+  ['post sitemap lastmod drift', edit('site/sitemap.xml', /(october-2026-source-refresh\/<\/loc><lastmod>)[^<]+/, '$12020-01-01'), 'lastmod for /blog/october-2026-source-refresh/'],
+  ['blog index title drift', edit(BLOG, '>What changed in the October 2026 source refresh</a>', '>The October refresh</a>'), 'blog index must list every post'],
+  ['blog index date drift', edit(BLOG, '<time datetime="2026-10-09">', '<time datetime="2026-10-08">'), 'blog index must list every post'],
+  ['blog index without feed link', edit(BLOG, /<link rel="alternate"[^>]*>\n/, ''), 'blog index must link the feed'],
+  ['feed title drift', edit(FEED, '<title>What changed in the October 2026 source refresh</title>', '<title>The October refresh</title>'), 'feed entries must match the posts'],
+  ['feed entry date drift', edit(FEED, '<published>2026-10-09T00:00:00Z</published>', '<published>2026-10-08T00:00:00Z</published>'), 'feed entries must match the posts'],
+  ['feed entry link differs from id', edit(FEED, /(<link rel="alternate" type="text\/html" href="https:\/\/crossingguard\.dev\/blog\/october-2026-source-refresh\/)"/, '$1x/"'), 'entry link must equal its id'],
+  ['feed updated drift', edit(FEED, /(<\/subtitle>[\s\S]*?<updated>)2026-10-09/, '$12026-10-01'), 'feed <updated> must be'],
+  ['feed without self link', edit(FEED, 'rel="self"', 'rel="me"'), 'rel="self" link'],
+  ['post missing from feed', edit(FEED, /\s*<entry>[\s\S]*?<\/entry>/, ''), 'feed entries must match the posts'],
+  ['nav entry marked current on the blog', edit(BLOG, '<a href="/agents/">Agents</a>', '<a href="/agents/" aria-current="true">Agents</a>'), 'no nav link may be marked current'],
+  ['voice: dash in a post', inPost('<p>The export ran — then stopped.</p>'), 'voice: dash'],
   // 6. banned absolutes
   ['banned absolute', inMain('site/agents/index.html', '<p>A tamper-proof boundary.</p>'), 'banned absolute'],
   ['banned absolute in description', edit('site/index.html', /(<meta name="description" content=")/, '$1Guaranteed. '), 'banned absolute'],
@@ -139,6 +170,7 @@ const POSITIVE = [
   ['technical key', inArticle('<p>Add the <code>hooks</code> key to the settings file.</p>')],
   ['deep dive label', edit(T1, '<p class="eyebrow">Tutorial', '<p class="eyebrow">Deep dive')],
   ["'the thing is' inside a sentence", inArticle('<p>Say what the thing is before you configure it.</p>')],
+  ['a post with a valid Updated date', editedPost],
 ];
 
 const run = (dir, env = {}, args = []) => spawnSync(process.execPath, ['scripts/check-site.mjs', ...args], { cwd: dir, env: { ...process.env, ...env }, encoding: 'utf8' });

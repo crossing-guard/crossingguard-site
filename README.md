@@ -11,6 +11,7 @@ publishes the `site/` directory as it is.
 | `site/` | Everything that is served, and nothing else |
 | `site/index.html`, `site/agents/`, `site/compare/`, `site/limits/` | Marketing pages |
 | `site/learn/` | The Learn hub, plus one directory per tutorial |
+| `site/blog/` | The blog index, the Atom feed (`feed.xml`), plus one directory per post |
 | `site/styleguide/` | Component reference for contributors. Not linked, not indexed |
 | `site/404.html` | Served by Cloudflare Pages for any missing path |
 | `site/assets/` | `site.css` (the only stylesheet), `legacy-hash.js` (the only script), favicon |
@@ -20,8 +21,9 @@ publishes the `site/` directory as it is.
 | `scripts/prose-invariants.mjs` | Confirms that a prose edit left labels, code, links and numbers unchanged |
 | `scripts/serve.mjs` | Local preview that behaves like Cloudflare Pages |
 | `templates/tutorial.html` | Skeleton to copy for a new tutorial |
+| `templates/post.html` | Skeleton to copy for a new blog post |
 | `claims/` | Evidence records for claims about Crossing Guard itself (added with the first page that makes one) |
-| `TUTORIALS.md` | How to write a tutorial |
+| `TUTORIALS.md` | How to write a tutorial, and how to write a blog post |
 
 Every page repeats the same header and footer markup between `<!-- site-header -->` and
 `<!-- site-footer -->` markers. Only `aria-current` differs. The check fails if any copy
