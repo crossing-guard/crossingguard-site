@@ -187,7 +187,8 @@ Copy `templates/post.html` and keep these parts in this order:
 
 The rules for a post:
 
-- Write what happened, in the past tense. A sentence about how something behaves says "as of"
+- Write what happened in the past tense. What a release contains can be in the present tense,
+  because the dateline dates it. A sentence about how a vendor's product behaves says "as of"
   the publish date or links to the tutorial that checked it.
 - Write from a real run, a real change or a real incident. No predicted outcomes.
 - Link the source file, pull request or tutorial behind each fact about Crossing Guard. Link

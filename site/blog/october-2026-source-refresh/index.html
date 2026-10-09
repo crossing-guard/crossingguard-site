@@ -52,9 +52,9 @@
       <section>
         <h2 id="what-is-new">What changed since September</h2>
         <p>The database schema went from 32 in the September snapshot to 46. We also gave the lookup for an agent's executable one home, in <span style="font-family:var(--mono)">internal/guardcli</span>.</p>
-        <p>In this refresh, recall tools ran over a local MCP server, started with <span style="font-family:var(--mono)">crossing-guard mcp</span> and registered with <span style="font-family:var(--mono)">crossing-guard init --recall</span>. The console gained per-call usage history read from local session files, session boards and model routes. We added an Antigravity transcript reader and Antigravity CLI chat through the same provider contract as the other agents.</p>
-        <p>The team server client arrived too, with <span style="font-family:var(--mono)">crossing-guard link</span>, a sync outbox and memory by scope. As shipped in this refresh, a linked device sent records to the team server named by its user; an unlinked device sent nothing to a team server. The server itself was a separate project and was not included in the repository.</p>
-        <p>The safety-starter rulebook reached six rules. The new rule, <span style="font-family:var(--mono)">team-link-change</span>, asked before a device was linked to a team server.</p>
+        <p>Recall tools now run over a local MCP server, started with <span style="font-family:var(--mono)">crossing-guard mcp</span> and registered with <span style="font-family:var(--mono)">crossing-guard init --recall</span>. The console gained per-call usage history read from local session files, session boards and model routes. We added an Antigravity transcript reader and Antigravity CLI chat through the same provider contract as the other agents.</p>
+        <p>The team server client arrived too, with <span style="font-family:var(--mono)">crossing-guard link</span>, a sync outbox and memory by scope. A linked device sends records to the team server named by its user; an unlinked device sends nothing to a team server. The server itself is a separate project and is not in the repository.</p>
+        <p>The safety-starter rulebook now has six rules. The new rule, <span style="font-family:var(--mono)">team-link-change</span>, asks before a device is linked to a team server.</p>
       </section>
       <section>
         <h2 id="upgrading">Trying the upgrade from September</h2>
@@ -72,8 +72,8 @@
         <h2 id="what-we-did-not-check">Where we stopped</h2>
         <p>We did not run a full installed journey on a clean macOS account: install, use with a real agent, recovery and uninstall. The checks above used disposable data. We did not check Linux or Windows either. macOS was the only platform we ran it on.</p>
         <p>We ran our own scans for private names, sample data and captured session ids, with GitHub push protection still on. We did not run a dedicated secret scanner.</p>
-        <p>One bit of wording had not caught up with the change. In this refresh, <span style="font-family:var(--mono)">crossing-guard init</span> still printed "nothing leaves this machine" beside the data folder. That held for an unlinked device, but we had not reworded it for a linked one.</p>
-        <p>We shipped source. There was still no binary download; <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/building-source.md">Building the source</a> lists what you need.</p>
+        <p>One bit of wording has not caught up with the change. <span style="font-family:var(--mono)">crossing-guard init</span> still prints "nothing leaves this machine" beside the data folder. That holds for an unlinked device, but we have not reworded it for a linked one.</p>
+        <p>We shipped source. There is still no binary download; <a href="https://github.com/crossing-guard/crossing-guard/blob/1e89282b/docs/building-source.md">Building the source</a> lists what you need.</p>
       </section>
       <nav class="series" aria-label="Posts">
         <a class="prev" href="/blog/"><small>Back to</small>All posts</a>
